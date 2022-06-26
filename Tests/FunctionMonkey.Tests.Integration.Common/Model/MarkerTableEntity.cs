@@ -1,10 +1,11 @@
-﻿using System;
+﻿using Azure;
+using Azure.Data.Tables;
+using System;
 using System.Threading.Tasks;
-using Microsoft.WindowsAzure.Storage.Table;
 
 namespace FunctionMonkey.Tests.Integration.Common.Model
 {
-    public class MarkerTableEntity : TableEntity
+    public class MarkerTableEntity : ITableEntity
     {
         public static Task<MarkerTableEntity> Success(Guid markerId)
         {
@@ -14,5 +15,17 @@ namespace FunctionMonkey.Tests.Integration.Common.Model
                 RowKey = string.Empty
             });
         }
+
+        /// <inheritdoc />
+        public string PartitionKey { get; set; }
+
+        /// <inheritdoc />
+        public string RowKey { get; set; }
+
+        /// <inheritdoc />
+        public DateTimeOffset? Timestamp { get; set; }
+
+        /// <inheritdoc />
+        public ETag ETag { get; set; }
     }
 }

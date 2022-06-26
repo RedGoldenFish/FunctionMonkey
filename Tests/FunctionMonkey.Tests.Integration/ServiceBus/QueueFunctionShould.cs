@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Azure.Messaging.ServiceBus;
+using Azure.Storage.Queues;
 using FunctionMonkey.Tests.Integration.Common;
-using Microsoft.Azure.ServiceBus;
-using Newtonsoft.Json;
+using System;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace FunctionMonkey.Tests.Integration.ServiceBus
@@ -18,11 +16,9 @@ namespace FunctionMonkey.Tests.Integration.ServiceBus
             {
                 MarkerId = Guid.NewGuid()
             };
-            string json = JsonConvert.SerializeObject(marker);
-            byte[] body = Encoding.UTF8.GetBytes(json);
 
-            IQueueClient queueClient = new QueueClient(Settings.ServiceBusConnectionString, "testqueue");
-            await queueClient.SendAsync(new Message(body));
+            var queueClient = new QueueClient(Settings.ServiceBusConnectionString, "testqueue");
+            await queueClient.SendMessageAsync(new BinaryData(marker));
 
             await marker.Assert();
         }
@@ -34,11 +30,16 @@ namespace FunctionMonkey.Tests.Integration.ServiceBus
             {
                 MarkerId = Guid.NewGuid()
             };
-            string json = JsonConvert.SerializeObject(marker);
-            byte[] body = Encoding.UTF8.GetBytes(json);
 
-            IQueueClient queueClient = new QueueClient(Settings.ServiceBusConnectionString, "sessionidtestqueue");
-            await queueClient.SendAsync(new Message(body) { SessionId = Guid.NewGuid().ToString() });
+            var serviceBusMessage = new ServiceBusMessage(new BinaryData(marker))
+            {
+                SessionId = Guid.NewGuid().ToString()
+            };
+
+            var client = new ServiceBusClient(Settings.ServiceBusConnectionString);
+
+            var queueClient = client.CreateSender("sessionidtestqueue");
+            await queueClient.SendMessageAsync(serviceBusMessage);
 
             await marker.Assert();
         }
@@ -50,11 +51,12 @@ namespace FunctionMonkey.Tests.Integration.ServiceBus
             {
                 MarkerId = Guid.NewGuid()
             };
-            string json = JsonConvert.SerializeObject(marker);
-            byte[] body = Encoding.UTF8.GetBytes(json);
+            var serviceBusMessage = new ServiceBusMessage(new BinaryData(marker));
 
-            IQueueClient queueClient = new QueueClient(Settings.ServiceBusConnectionString, "tableoutput");
-            await queueClient.SendAsync(new Message(body));
+            var client = new ServiceBusClient(Settings.ServiceBusConnectionString);
+
+            var queueClient = client.CreateSender("tableoutput");
+            await queueClient.SendMessageAsync(serviceBusMessage);
 
             await marker.Assert();
         }

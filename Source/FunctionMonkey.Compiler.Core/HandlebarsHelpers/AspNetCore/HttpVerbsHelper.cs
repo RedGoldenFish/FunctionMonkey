@@ -1,12 +1,11 @@
-﻿using System;
+﻿using FunctionMonkey.Compiler.Core.Extensions;
+using FunctionMonkey.Model;
+using HandlebarsDotNet;
+using System;
 using System.Globalization;
-using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
-using FunctionMonkey.Compiler.Core.Extensions;
-using FunctionMonkey.Model;
-using HandlebarsDotNet;
 
 namespace FunctionMonkey.Compiler.Core.HandlebarsHelpers.AspNetCore
 {
@@ -14,20 +13,20 @@ namespace FunctionMonkey.Compiler.Core.HandlebarsHelpers.AspNetCore
     {
         public static void Register()
         {
-            Handlebars.RegisterHelper("httpVerbs", (writer, context, parameters) => HelperFunction(writer, context, parameters));
+            Handlebars.RegisterHelper("httpVerbs", HelperFunction);
         }
 
-        private static void HelperFunction(TextWriter writer, dynamic context, object[] parameters)
+        private static void HelperFunction(EncodedTextWriter writer, Context context, Arguments parameters)
         {
-            if (context is HttpFunctionDefinition httpFunctionDefinition)
+            if (context.Value is HttpFunctionDefinition httpFunctionDefinition)
             {
                 HttpMethod[] verbs = httpFunctionDefinition.Verbs.ToArray();
                 if (verbs.Length == 0)
                 {
-                    verbs = new[] {HttpMethod.Get};
+                    verbs = new[] { HttpMethod.Get };
                 }
-                
-                TextInfo ti = new CultureInfo("en-US",false).TextInfo;
+
+                TextInfo ti = new CultureInfo("en-US", false).TextInfo;
                 StringBuilder sb = new StringBuilder();
                 foreach (HttpMethod verb in verbs)
                 {

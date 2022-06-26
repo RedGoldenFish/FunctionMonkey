@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Azure.Messaging.ServiceBus;
 using FunctionMonkey.Tests.Integration.Common;
-using Microsoft.Azure.ServiceBus;
-using Newtonsoft.Json;
+using System;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace FunctionMonkey.Tests.Integration.ServiceBus
@@ -18,11 +15,11 @@ namespace FunctionMonkey.Tests.Integration.ServiceBus
             {
                 MarkerId = Guid.NewGuid()
             };
-            string json = JsonConvert.SerializeObject(marker);
-            byte[] body = Encoding.UTF8.GetBytes(json);
 
-            ITopicClient topicClient = new TopicClient(Settings.ServiceBusConnectionString, "testtopic");
-            await topicClient.SendAsync(new Message(body));
+            var client = new ServiceBusClient(Settings.ServiceBusConnectionString);
+
+            var topicClient = client.CreateSender("testtopic");
+            await topicClient.SendMessageAsync(new ServiceBusMessage(new BinaryData(marker)));
 
             await marker.Assert();
         }
@@ -34,11 +31,16 @@ namespace FunctionMonkey.Tests.Integration.ServiceBus
             {
                 MarkerId = Guid.NewGuid()
             };
-            string json = JsonConvert.SerializeObject(marker);
-            byte[] body = Encoding.UTF8.GetBytes(json);
 
-            ITopicClient topicClient = new TopicClient(Settings.ServiceBusConnectionString, "sessionidtesttopic");
-            await topicClient.SendAsync(new Message(body) { SessionId = Guid.NewGuid().ToString()});
+            var serviceBusMessage = new ServiceBusMessage(new BinaryData(marker))
+            {
+                SessionId = Guid.NewGuid().ToString()
+            };
+
+            var client = new ServiceBusClient(Settings.ServiceBusConnectionString);
+
+            var topicClient = client.CreateSender("sessionidtesttopic");
+            await topicClient.SendMessageAsync(serviceBusMessage);
 
             await marker.Assert();
         }

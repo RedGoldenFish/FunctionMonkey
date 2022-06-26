@@ -1,9 +1,9 @@
-﻿using System;
+﻿using FunctionMonkey.Abstractions;
+using FunctionMonkey.Abstractions.Contexts;
+using System;
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading;
-using FunctionMonkey.Abstractions;
-using FunctionMonkey.Abstractions.Contexts;
 using ExecutionContext = FunctionMonkey.Abstractions.Contexts.ExecutionContext;
 
 namespace FunctionMonkey.Testing.Mocks
@@ -26,7 +26,7 @@ namespace FunctionMonkey.Testing.Mocks
 
         private static readonly AsyncLocal<HttpContext> HttpContextLocal = new AsyncLocal<HttpContext>();
 
-        void IContextSetter.SetServiceBusContext(int deliveryCount, DateTime enqueuedTimeUtc, string messageId, string lockToken)
+        void IContextSetter.SetServiceBusContext(int deliveryCount, DateTimeOffset enqueuedTimeUtc, string messageId, string lockToken)
         {
             ServiceBusContextLocal.Value = new ServiceBusContext
             {
@@ -37,18 +37,18 @@ namespace FunctionMonkey.Testing.Mocks
             };
         }
 
-        void IContextSetter.SetStorageQueueContext(DateTimeOffset expirationTime, DateTimeOffset insertionTime, DateTimeOffset nextVisibleTime,
-            string queueTrigger, string id, string popReceipt, int dequeueCount)
+        void IContextSetter.SetStorageQueueContext(DateTimeOffset? expirationTime, DateTimeOffset? insertionTime, DateTimeOffset? nextVisibleTime,
+            string queueTrigger, string id, string popReceipt, long dequeueCount)
         {
             StorageQueueContextLocal.Value = new StorageQueueContext
             {
                 DequeueCount = dequeueCount,
                 ExpirationTime = expirationTime,
+                QueueTrigger = queueTrigger,
                 Id = id,
                 InsertionTime = insertionTime,
                 NextVisibleTime = nextVisibleTime,
-                PopReceipt = popReceipt,
-                QueueTrigger = queueTrigger
+                PopReceipt = popReceipt
             };
         }
 

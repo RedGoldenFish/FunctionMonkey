@@ -12,7 +12,7 @@ namespace OpenApi
         {
             builder
                 .CompilerOptions(options => options
-                    .OutputSourceTo(@"/Users/jamesrandall/code/authoredSource")
+                    .OutputSourceTo(@"C:/Repos/cgoconseils/FunctionMonkey/code/authoredSource")
                 )
                 .Setup((serviceCollection, commandRegistry) =>
                 {

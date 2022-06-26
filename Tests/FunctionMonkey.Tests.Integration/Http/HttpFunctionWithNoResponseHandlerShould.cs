@@ -1,9 +1,8 @@
-﻿using System.Net;
-using System.Net.Http;
-using System.Threading.Tasks;
-using Flurl;
+﻿using Flurl;
 using Flurl.Http;
 using FunctionMonkey.Tests.Integration.Http.Helpers;
+using System.Net;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace FunctionMonkey.Tests.Integration.Http
@@ -13,32 +12,32 @@ namespace FunctionMonkey.Tests.Integration.Http
         [Fact]
         public async Task ReturnOkWhenCommandHasNoResultAndNoValidation()
         {
-            HttpResponseMessage response = await Settings.Host
+            var response = await Settings.Host
                 .AppendPathSegment("/noResponseHandler/noResult/noValidation")
                 .GetAsync();
 
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Equal((int)HttpStatusCode.OK, response.StatusCode);
         }
 
         [Fact]
         public async Task ReturnOkWhenCommandHasNoResultAndPassesValidation()
         {
-            HttpResponseMessage response = await Settings.Host
+            var response = await Settings.Host
                 .AppendPathSegment("/noResponseHandler/noResult/validationPasses")
                 .GetAsync();
 
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Equal((int)HttpStatusCode.OK, response.StatusCode);
         }
 
         [Fact]
         public async Task ReturnBadRequestWhenCommandHasNoResultAndFailsValidation()
         {
-            HttpResponseMessage response = await Settings.Host
+            var response = await Settings.Host
                 .AppendPathSegment("/noResponseHandler/noResult/validationFails")
                 .AllowHttpStatus(HttpStatusCode.BadRequest)
                 .GetAsync();
 
-            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+            Assert.Equal((int)HttpStatusCode.BadRequest, response.StatusCode);
         }
 
         [Fact]
@@ -73,10 +72,10 @@ namespace FunctionMonkey.Tests.Integration.Http
             }
             catch (FlurlHttpException fex)
             {
-                Assert.Equal(HttpStatusCode.BadRequest, fex.Call.HttpStatus);
+                Assert.Equal(HttpStatusCode.BadRequest, fex.Call.HttpResponseMessage.StatusCode);
                 ValidationResult result = await fex.GetResponseJsonAsync<ValidationResult>();
                 result.ValidateResponse();
-            }            
+            }
         }
     }
 }

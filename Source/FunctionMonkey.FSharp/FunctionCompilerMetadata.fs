@@ -101,7 +101,7 @@ module internal FunctionCompilerMetadata =
                 LeaseAcquireInterval = (cosmosFunction.leaseAcquireInterval |> nullableInt),
                 LeaseExpirationInterval = (cosmosFunction.leaseExpirationInterval |> nullableInt),
                 LeaseRenewInterval = (cosmosFunction.leaseRenewInterval |> nullableInt),
-                CheckpointFrequency = (cosmosFunction.checkpointFrequency |> nullableInt),
+                CheckpointInterval = (cosmosFunction.checkpointInterval |> nullableInt),
                 LeasesCollectionThroughput = (cosmosFunction.leasesCollectionThroughput |> nullableInt)
             )
         

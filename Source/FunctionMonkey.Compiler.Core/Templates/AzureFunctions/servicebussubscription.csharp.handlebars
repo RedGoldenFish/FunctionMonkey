@@ -1,5 +1,5 @@
 using System;
-using Microsoft.Azure.ServiceBus;
+using Azure.Messaging.ServiceBus;
 using System.Threading.Tasks;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
@@ -16,7 +16,7 @@ namespace {{Namespace}}
         [FunctionName("{{Name}}")]
         public static async Task Run(
             [ServiceBusTrigger("{{TopicName}}", "{{SubscriptionName}}", Connection="{{ConnectionStringName}}"{{#if IsSessionEnabled}}, IsSessionsEnabled=true{{/if}})]
-            Message queueItem,
+            ServiceBusReceivedMessage queueItem,
             int deliveryCount,
             DateTime enqueuedTimeUtc,
             string messageId,
@@ -30,7 +30,7 @@ namespace {{Namespace}}
             FunctionMonkey.Runtime.FunctionProvidedLogger.Value = log;
             FunctionMonkey.PluginFunctions pluginFunctions = FunctionMonkey.Runtime.PluginFunctions["{{Name}}"];
 
-            string body = System.Text.Encoding.UTF8.GetString(queueItem.Body);
+            string body = queueItem.Body.ToString();
             {{{CommandTypeName}}} command;
             if (!System.String.IsNullOrWhiteSpace(body))
             {
@@ -43,7 +43,7 @@ namespace {{Namespace}}
 
             var contextSetter = (FunctionMonkey.Abstractions.IContextSetter)
                 FunctionMonkey.Runtime.ServiceProvider.GetService(typeof(FunctionMonkey.Abstractions.IContextSetter));
-            contextSetter.SetServiceBusContext(deliveryCount, enqueuedTimeUtc, messageId, queueItem.SystemProperties.LockToken);
+            contextSetter.SetServiceBusContext(queueItem.DeliveryCount, queueItem.EnqueuedTime, queueItem.MessageId, queueItem.LockToken);
             contextSetter.SetExecutionContext(executionContext.FunctionDirectory,
                 executionContext.FunctionAppDirectory,
                 executionContext.FunctionName,

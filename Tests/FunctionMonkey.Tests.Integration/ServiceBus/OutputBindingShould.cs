@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Net;
-using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
-using Flurl;
+﻿using Flurl;
 using Flurl.Http;
 using FunctionMonkey.Tests.Integration.Common;
 using FunctionMonkey.Tests.Integration.Http;
+using System;
+using System.Net;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace FunctionMonkey.Tests.Integration.ServiceBus
@@ -23,16 +20,16 @@ namespace FunctionMonkey.Tests.Integration.ServiceBus
             {
                 MarkerId = Guid.NewGuid()
             };
-            HttpResponseMessage response = await Settings.Host
+            var response = await Settings.Host
                 .AppendPathSegment("outputBindings")
                 .AppendPathSegment("toServiceBusQueue")
                 .SetQueryParam("markerId", marker.MarkerId)
                 .GetAsync();
 
-            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+            Assert.Equal((int)HttpStatusCode.NoContent, response.StatusCode);
             await marker.Assert();
         }
-        
+
         [Fact]
         public async Task WriteToServiceBusQueueWhenResponseIsSingularAndOutputConverterRuns()
         {
@@ -40,14 +37,14 @@ namespace FunctionMonkey.Tests.Integration.ServiceBus
             {
                 MarkerId = Guid.NewGuid()
             };
-            HttpResponseMessage response = await Settings.Host
+            var response = await Settings.Host
                 .AppendPathSegment("outputBindings")
                 .AppendPathSegment("toServiceBusQueueWithConverter")
                 .SetQueryParam("markerId", marker.MarkerId)
                 .SetQueryParam("value", 42)
                 .GetAsync();
 
-            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+            Assert.Equal((int)HttpStatusCode.NoContent, response.StatusCode);
             marker.Value++; // the converter adds 1 to the value
             await marker.Assert();
         }
@@ -59,13 +56,13 @@ namespace FunctionMonkey.Tests.Integration.ServiceBus
             {
                 MarkerId = Guid.NewGuid()
             };
-            HttpResponseMessage response = await Settings.Host
+            var response = await Settings.Host
                 .AppendPathSegment("outputBindings")
                 .AppendPathSegment("collectionToServiceBusQueue")
                 .SetQueryParam("markerId", marker.MarkerId)
                 .GetAsync();
 
-            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+            Assert.Equal((int)HttpStatusCode.NoContent, response.StatusCode);
             await marker.Assert();
         }
 
@@ -76,13 +73,13 @@ namespace FunctionMonkey.Tests.Integration.ServiceBus
             {
                 MarkerId = Guid.NewGuid()
             };
-            HttpResponseMessage response = await Settings.Host
+            var response = await Settings.Host
                 .AppendPathSegment("outputBindings")
                 .AppendPathSegment("toServiceBusTopic")
                 .SetQueryParam("markerId", marker.MarkerId)
                 .GetAsync();
 
-            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+            Assert.Equal((int)HttpStatusCode.NoContent, response.StatusCode);
             await marker.Assert();
         }
 
@@ -93,13 +90,13 @@ namespace FunctionMonkey.Tests.Integration.ServiceBus
             {
                 MarkerId = Guid.NewGuid()
             };
-            HttpResponseMessage response = await Settings.Host
+            var response = await Settings.Host
                 .AppendPathSegment("outputBindings")
                 .AppendPathSegment("collectionToServiceBusTopic")
                 .SetQueryParam("markerId", marker.MarkerId)
                 .GetAsync();
 
-            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+            Assert.Equal((int)HttpStatusCode.NoContent, response.StatusCode);
             await marker.Assert();
         }
     }

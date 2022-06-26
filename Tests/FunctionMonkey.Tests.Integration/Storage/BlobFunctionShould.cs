@@ -1,9 +1,8 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using Azure.Storage.Blobs;
 using FunctionMonkey.Tests.Integration.Common;
 using FunctionMonkey.Tests.Integration.Storage.Helpers;
-using Microsoft.WindowsAzure.Storage.Blob;
-using Newtonsoft.Json;
+using System;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace FunctionMonkey.Tests.Integration.Storage
@@ -17,13 +16,11 @@ namespace FunctionMonkey.Tests.Integration.Storage
             {
                 MarkerId = Guid.NewGuid()
             };
-            string json = JsonConvert.SerializeObject(marker);
 
-            CloudBlobClient blobClient = StorageAccount.CreateCloudBlobClient();
-            CloudBlobContainer container = blobClient.GetContainerReference("blobcommands");
+            BlobContainerClient container = new BlobContainerClient(Settings.StorageConnectionString, "blobcommands");
 
-            CloudBlockBlob blob = container.GetBlockBlobReference($"{marker.MarkerId}.json");
-            await blob.UploadTextAsync(json);
+            var blob = container.GetBlobClient($"{marker.MarkerId}.json");
+            await blob.UploadAsync(new BinaryData(marker));
 
             await marker.Assert();
         }
@@ -35,13 +32,11 @@ namespace FunctionMonkey.Tests.Integration.Storage
             {
                 MarkerId = Guid.NewGuid()
             };
-            string json = JsonConvert.SerializeObject(marker);
 
-            CloudBlobClient blobClient = StorageAccount.CreateCloudBlobClient();
-            CloudBlobContainer container = blobClient.GetContainerReference("outputbindingcontainer");
+            BlobContainerClient container = new BlobContainerClient(Settings.StorageConnectionString, "outputbindingcontainer");
 
-            CloudBlockBlob blob = container.GetBlockBlobReference($"{marker.MarkerId}.json");
-            await blob.UploadTextAsync(json);
+            var blob = container.GetBlobClient($"{marker.MarkerId}.json");
+            await blob.UploadAsync(new BinaryData(marker));
 
             await marker.Assert();
         }

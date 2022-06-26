@@ -177,7 +177,7 @@ module Models =
             leaseAcquireInterval: int option
             leaseExpirationInterval: int option
             leaseRenewInterval: int option
-            checkpointFrequency: int option
+            checkpointInterval: int option
             leasesCollectionThroughput: int option
         }
         interface IOutputBindingTarget<CosmosDbFunction> with

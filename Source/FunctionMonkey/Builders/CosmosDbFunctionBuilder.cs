@@ -1,11 +1,9 @@
-﻿using System.Collections.Generic;
-using AzureFromTheTrenches.Commanding.Abstractions;
-using FunctionMonkey.Abstractions.Builders;
+﻿using FunctionMonkey.Abstractions.Builders;
 using FunctionMonkey.Abstractions.Builders.Model;
 using FunctionMonkey.Abstractions.Extensions;
 using FunctionMonkey.Commanding.Cosmos.Abstractions;
-using FunctionMonkey.Extensions;
 using FunctionMonkey.Model;
+using System.Collections.Generic;
 
 namespace FunctionMonkey.Builders
 {
@@ -42,7 +40,7 @@ namespace FunctionMonkey.Builders
             int? leaseAcquireInterval = null,
             int? leaseExpirationInterval = null,
             int? leaseRenewInterval = null,
-            int? checkpointFrequency = null,
+            int? checkpointInterval = null,
             int? leasesCollectionThroughput = null,
             bool trackRemainingWork = false,
             string remainingWorkCronExpression = "*/5 * * * * *"
@@ -65,7 +63,7 @@ namespace FunctionMonkey.Builders
                 LeaseAcquireInterval = leaseAcquireInterval,
                 LeaseExpirationInterval = leaseExpirationInterval,
                 LeaseRenewInterval = leaseRenewInterval,
-                CheckpointFrequency = checkpointFrequency,
+                CheckpointInterval = checkpointInterval,
                 LeasesCollectionThroughput = leasesCollectionThroughput,
                 TrackRemainingWork = trackRemainingWork,
                 RemainingWorkCronExpression = remainingWorkCronExpression
@@ -88,7 +86,7 @@ namespace FunctionMonkey.Builders
             int? leaseAcquireInterval = null,
             int? leaseExpirationInterval = null,
             int? leaseRenewInterval = null,
-            int? checkpointFrequency = null,
+            int? checkpointInterval = null,
             int? leasesCollectionThroughput = null,
             bool trackRemainingWork = false,
             string remainingWorkCronExpression = "*/5 * * * * *"
@@ -111,7 +109,6 @@ namespace FunctionMonkey.Builders
                 LeaseAcquireInterval = leaseAcquireInterval,
                 LeaseExpirationInterval = leaseExpirationInterval,
                 LeaseRenewInterval = leaseRenewInterval,
-                CheckpointFrequency = checkpointFrequency,
                 LeasesCollectionThroughput = leasesCollectionThroughput,
                 ErrorHandlerType = typeof(TCosmosDbErrorHandler),
                 ErrorHandlerTypeName = typeof(TCosmosDbErrorHandler).EvaluateType(),

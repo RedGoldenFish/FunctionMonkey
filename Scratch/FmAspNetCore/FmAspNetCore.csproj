@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
     <PropertyGroup>
-        <TargetFramework>netcoreapp3.1</TargetFramework>
+        <TargetFramework>net6.0</TargetFramework>
     </PropertyGroup>
 
     <PropertyGroup>
@@ -15,8 +15,8 @@
         <FunctionPathSubFolder Condition="'$(AzureFunctionsVersion)' != '' AND '$(OS)' == 'Unix'">bin/</FunctionPathSubFolder>
         <FunctionPathSubFolder Condition="'$(AzureFunctionsVersion)' == ''"></FunctionPathSubFolder>
 
-        <FunctionCompilerExe Condition="'$(OS)' == 'Windows_NT'">dotnet "$(MSBuildThisFileDirectory)..\..\Source\FunctionMonkey.Compiler\bin\debug\netcoreapp3.1\FunctionMonkey.Compiler.dll"</FunctionCompilerExe>
-        <FunctionCompilerExe Condition="'$(OS)' == 'Unix'">dotnet "$(MSBuildThisFileDirectory)../../Source/FunctionMonkey.Compiler/bin/debug/netcoreapp3.1/FunctionMonkey.Compiler.dll"</FunctionCompilerExe>
+        <FunctionCompilerExe Condition="'$(OS)' == 'Windows_NT'">dotnet "$(MSBuildThisFileDirectory)..\..\Source\FunctionMonkey.Compiler\bin\debug\net6.0\FunctionMonkey.Compiler.dll"</FunctionCompilerExe>
+        <FunctionCompilerExe Condition="'$(OS)' == 'Unix'">dotnet "$(MSBuildThisFileDirectory)../../Source/FunctionMonkey.Compiler/bin/debug/net6.0/FunctionMonkey.Compiler.dll"</FunctionCompilerExe>
         <!-- compiler params -->
         <FunctionCompilerParams>"$(TargetDir)$(FunctionPathSubFolder)$(TargetName).dll" --netcore21 --jsonoutput</FunctionCompilerParams>
         <!-- publish params -->

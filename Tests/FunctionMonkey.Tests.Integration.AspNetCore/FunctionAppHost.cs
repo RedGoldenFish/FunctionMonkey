@@ -2,7 +2,6 @@ using FunctionMonkey.Abstractions;
 using FunctionMonkey.Abstractions.Builders;
 using FunctionMonkey.Compiler.Core;
 using FunctionMonkey.Tests.Integration.Common;
-using FunctionMonkey.Tests.Integration.Functions;
 
 namespace FunctionMonkey.Tests.Integration.AspNetCore
 {
@@ -13,7 +12,7 @@ namespace FunctionMonkey.Tests.Integration.AspNetCore
             builder
                 .CompilerOptions(options => options
                     .HttpTarget(CompileTargetEnum.AspNetCore)
-                    .OutputSourceTo(@"/Users/jamesrandall/code/authoredSource")
+                    .OutputSourceTo(@"C:/Repos/cgoconseils/FunctionMonkey/code/authoredSource")
                 )
                 .UseFunctionAppConfiguration<HttpFunctionAppConfiguration>();
         }

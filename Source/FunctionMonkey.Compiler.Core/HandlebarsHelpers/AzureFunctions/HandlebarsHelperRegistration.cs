@@ -10,7 +10,7 @@
             MappedHeaderNameForPropertyHelper.Register();
             ParameterOutputBindingHelper.Register();
             CollectorOutputBindingHelper.Register();
-            OutputBindingJsonHelper.Register();
+            //OutputBindingJsonHelper.Register();
         }
     }
 }

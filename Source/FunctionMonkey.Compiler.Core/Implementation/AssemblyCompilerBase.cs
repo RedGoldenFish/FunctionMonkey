@@ -1,12 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Runtime.Versioning;
-using System.Text;
-using System.Threading.Tasks;
 using FunctionMonkey.Abstractions.Builders.Model;
 using FunctionMonkey.Abstractions.Extensions;
 using FunctionMonkey.Compiler.Core.Implementation.OpenApi;
@@ -16,6 +7,15 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Emit;
 using Microsoft.FSharp.Core;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Runtime.Versioning;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace FunctionMonkey.Compiler.Core.Implementation
 {
@@ -30,7 +30,7 @@ namespace FunctionMonkey.Compiler.Core.Implementation
         public ICompilerLog CompilerLog { get; }
 
         public ITemplateProvider TemplateProvider { get; }
-        
+
         public OpenApiOutputModel OpenApiOutputModel { get; set; }
 
         protected abstract List<SyntaxTree> CompileSource(
@@ -77,12 +77,12 @@ namespace FunctionMonkey.Compiler.Core.Implementation
             CompilerOptions compilerOptions,
             string outputAuthoredSourceFolder = null)
         {
-            DirectoryInfo directoryInfo =  outputAuthoredSourceFolder != null ? new DirectoryInfo(outputAuthoredSourceFolder) : null;
+            DirectoryInfo directoryInfo = outputAuthoredSourceFolder != null ? new DirectoryInfo(outputAuthoredSourceFolder) : null;
             if (directoryInfo != null && !directoryInfo.Exists)
             {
                 directoryInfo = null;
             }
-            
+
             List<SyntaxTree> syntaxTrees = CompileSource(functionDefinitions,
                 newAssemblyNamespace,
                 directoryInfo).ToList();
@@ -114,7 +114,7 @@ namespace FunctionMonkey.Compiler.Core.Implementation
         {
             if (OpenApiOutputModel != null && OpenApiOutputModel.IsConfiguredForUserInterface)
             {
-                string templateSource = TemplateProvider.GetTemplate("swaggerui","csharp");
+                string templateSource = TemplateProvider.GetTemplate("swaggerui", "csharp");
                 return CreateSyntaxTreeFromHandlebarsTemplate(templateSource, "SwaggerUi", new
                 {
                     Namespace = newAssemblyNamespace
@@ -123,19 +123,19 @@ namespace FunctionMonkey.Compiler.Core.Implementation
 
             return null;
         }
-        
+
         protected static SyntaxTree CreateSyntaxTreeFromHandlebarsTemplate(string templateSource, string name,
             object functionDefinition, DirectoryInfo directoryInfo)
         {
-            Func<object, string> template = Handlebars.Compile(templateSource);
+            var template = Handlebars.Compile(templateSource);
 
             string outputCode = template(functionDefinition);
             OutputDiagnosticCode(directoryInfo, name, outputCode);
 
-            SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(outputCode, path:$"{name}.cs");
+            SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(outputCode, path: $"{name}.cs");
             return syntaxTree;
         }
-        
+
         protected static List<string> ResolveLocationsWithExistingReferences(string outputBinaryFolder, IReadOnlyCollection<string> locations)
         {
             List<string> resolvedLocations = new List<string>(locations.Count);
@@ -162,14 +162,14 @@ namespace FunctionMonkey.Compiler.Core.Implementation
 
             return resolvedLocations;
         }
-        
+
         protected List<PortableExecutableReference> BuildReferenceSet(List<string> resolvedLocations)
         {
             List<PortableExecutableReference> references =
                 resolvedLocations.Select(x => MetadataReference.CreateFromFile(x)).ToList();
             return references;
         }
-        
+
         protected SyntaxTree CreateLinkBack(
             IReadOnlyCollection<AbstractFunctionDefinition> functionDefinitions,
             Type backlinkType,
@@ -178,12 +178,12 @@ namespace FunctionMonkey.Compiler.Core.Implementation
             DirectoryInfo outputAuthoredSourceFolder)
         {
             if (backlinkType == null) return null; // back link referencing has been disabled
-            
+
             // Now we need to create a class that references the assembly with the configuration builder
             // otherwise the reference will be optimised away by Roslyn and it will then never get loaded
             // by the function host - and so at runtime the builder with the runtime info in won't be located
             string linkBackTemplateSource = TemplateProvider.GetCSharpLinkBackTemplate();
-            Func<object, string> linkBackTemplate = Handlebars.Compile(linkBackTemplateSource);
+            var linkBackTemplate = Handlebars.Compile(linkBackTemplateSource);
 
             LinkBackModel linkBackModel = null;
             if (backlinkPropertyInfo != null)
@@ -205,7 +205,7 @@ namespace FunctionMonkey.Compiler.Core.Implementation
                     Namespace = newAssemblyNamespace
                 };
             }
-            
+
             string outputLinkBackCode = linkBackTemplate(linkBackModel);
             OutputDiagnosticCode(outputAuthoredSourceFolder, "ReferenceLinkBack", outputLinkBackCode);
             SyntaxTree linkBackSyntaxTree = CSharpSyntaxTree.ParseText(outputLinkBackCode);
@@ -218,16 +218,16 @@ namespace FunctionMonkey.Compiler.Core.Implementation
             bool isFSharpProject
             )
         {
-            HashSet<string> locations =  new HashSet<string>(BuildCandidateReferenceList(compilerOptions, isFSharpProject));
+            HashSet<string> locations = new HashSet<string>(BuildCandidateReferenceList(compilerOptions, isFSharpProject));
             locations.Add(typeof(Task).GetTypeInfo().Assembly.Location);
             locations.Add(typeof(Runtime).GetTypeInfo().Assembly.Location);
-            
+
             if (isFSharpProject)
             {
                 locations.Add(typeof(FSharpOption<>).Assembly.Location);
             }
 
-            
+
             Assembly[] currentAssemblies = AppDomain.CurrentDomain.GetAssemblies();
 
             locations.Add(currentAssemblies.Single(x => x.GetName().Name == "netstandard").Location);
@@ -240,14 +240,14 @@ namespace FunctionMonkey.Compiler.Core.Implementation
             locations.Add(currentAssemblies.Single(x => x.GetName().Name == "System.Threading").Location);
             locations.Add(currentAssemblies.Single(x => x.GetName().Name == "System.Threading.Tasks").Location);
 
-                foreach (string externalAssemblyLocation in externalAssemblyLocations)
+            foreach (string externalAssemblyLocation in externalAssemblyLocations)
             {
                 locations.Add(externalAssemblyLocation);
             }
 
             return locations;
         }
-        
+
         private bool CompileAssembly(IReadOnlyCollection<SyntaxTree> syntaxTrees,
             IReadOnlyCollection<string> externalAssemblyLocations,
             string outputBinaryFolder,
@@ -268,7 +268,7 @@ namespace FunctionMonkey.Compiler.Core.Implementation
                 .ToArray();
 
             List<PortableExecutableReference> references = BuildReferenceSet(resolvedLocations);
-            
+
             CSharpCompilation compilation = CSharpCompilation.Create(assemblyNamespace) //(outputAssemblyName)
                     .WithOptions(new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary))
                     .AddReferences(references)
@@ -284,7 +284,7 @@ namespace FunctionMonkey.Compiler.Core.Implementation
                 IEnumerable<Diagnostic> failures = compilationResult.Diagnostics.Where(diagnostic =>
                     diagnostic.IsWarningAsError ||
                     diagnostic.Severity == DiagnosticSeverity.Error);
-                    
+
                 foreach (Diagnostic diagnostic in failures)
                 {
                     CompilerLog.Error($"Error compiling function: {diagnostic.ToString()}");
@@ -293,7 +293,7 @@ namespace FunctionMonkey.Compiler.Core.Implementation
 
             return compilationResult.Success;
         }
-        
+
         protected static void OutputDiagnosticCode(DirectoryInfo directoryInfo, string name,
             string outputCode)
         {

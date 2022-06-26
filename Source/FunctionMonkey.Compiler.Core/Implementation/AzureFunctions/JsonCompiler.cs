@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using FunctionMonkey.Abstractions.Builders.Model;
-using FunctionMonkey.Compiler.Core.HandlebarsHelpers.AzureFunctions;
+﻿using FunctionMonkey.Abstractions.Builders.Model;
 using FunctionMonkey.Compiler.Core.Implementation.OpenApi;
 using FunctionMonkey.Model;
 using HandlebarsDotNet;
 using Newtonsoft.Json;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 
 namespace FunctionMonkey.Compiler.Core.Implementation.AzureFunctions
 {
@@ -28,7 +26,7 @@ namespace FunctionMonkey.Compiler.Core.Implementation.AzureFunctions
             foreach (AbstractFunctionDefinition functionDefinition in functionDefinitions)
             {
                 string templateSource = _templateProvider.GetJsonTemplate(functionDefinition);
-                Func<object, string> template = Handlebars.Compile(templateSource);
+                var template = Handlebars.Compile(templateSource);
 
                 functionDefinition.AssemblyName = $"{outputNamespaceName}.dll";
                 functionDefinition.FunctionClassTypeName = $"{functionDefinition.Namespace}.{functionDefinition.Name}";
@@ -49,7 +47,7 @@ namespace FunctionMonkey.Compiler.Core.Implementation.AzureFunctions
                             FunctionClassTypeName = $"{functionDefinition.Namespace}.Monitor{functionDefinition.Name}"
                         };
                         string timerTemplateSource = _templateProvider.GetJsonTemplate(cosmosMonitorDefinition);
-                        Func<object, string> timerTemplate = Handlebars.Compile(timerTemplateSource);
+                        var timerTemplate = Handlebars.Compile(timerTemplateSource);
 
                         string timerJson = timerTemplate(cosmosMonitorDefinition);
                         WriteFunctionTemplate(outputBinaryFolder, $"Monitor{functionDefinition.Name}", timerJson);
@@ -60,7 +58,7 @@ namespace FunctionMonkey.Compiler.Core.Implementation.AzureFunctions
             if (openApiOutputModel != null && openApiOutputModel.IsConfiguredForUserInterface)
             {
                 string templateSource = _templateProvider.GetTemplate("swaggerui", "json");
-                Func<object, string> template = Handlebars.Compile(templateSource);
+                var template = Handlebars.Compile(templateSource);
                 string json = template(new
                 {
                     AssemblyFilename = $"{outputNamespaceName}.dll",
@@ -72,7 +70,7 @@ namespace FunctionMonkey.Compiler.Core.Implementation.AzureFunctions
 
             {
                 string templateSource = _templateProvider.GetTemplate("extensions", "json");
-                Func<object, string> template = Handlebars.Compile(templateSource);
+                var template = Handlebars.Compile(templateSource);
                 string json = template(new
                 {
                     AssemblyName = $"{outputNamespaceName}",

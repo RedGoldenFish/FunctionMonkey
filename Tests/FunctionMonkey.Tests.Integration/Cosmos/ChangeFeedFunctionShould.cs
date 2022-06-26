@@ -1,7 +1,7 @@
-﻿using System;
+﻿using FunctionMonkey.Tests.Integration.Common;
+using Microsoft.Azure.Cosmos;
+using System;
 using System.Threading.Tasks;
-using FunctionMonkey.Tests.Integration.Common;
-using Microsoft.Azure.Documents.Client;
 using Xunit;
 
 namespace FunctionMonkey.Tests.Integration.Cosmos
@@ -15,13 +15,15 @@ namespace FunctionMonkey.Tests.Integration.Cosmos
             string[] cosmosConnectionStringParts = cosmosConnectionString.Split(';');
             string cosmosEndpoint = cosmosConnectionStringParts[0].Substring("AccountEndpoint=".Length);
             string cosmosAuthKey = cosmosConnectionStringParts[1].Substring("AccountKey=".Length).TrimEnd(';');
-            using (DocumentClient documentClient = new DocumentClient(new Uri(cosmosEndpoint), cosmosAuthKey))
+            using (var cosmosClient = new CosmosClient(cosmosEndpoint, cosmosAuthKey))
             {
+                var container = cosmosClient.GetContainer("testdatabase", "testcollection");
+
                 MarkerMessage marker = new MarkerMessage
                 {
                     MarkerId = Guid.NewGuid()
                 };
-                await documentClient.CreateDocumentAsync(UriFactory.CreateDocumentCollectionUri("testdatabase", "testcollection"), marker);
+                await container.CreateItemAsync(marker);
 
                 await marker.Assert();
             }
@@ -34,13 +36,15 @@ namespace FunctionMonkey.Tests.Integration.Cosmos
             string[] cosmosConnectionStringParts = cosmosConnectionString.Split(';');
             string cosmosEndpoint = cosmosConnectionStringParts[0].Substring("AccountEndpoint=".Length);
             string cosmosAuthKey = cosmosConnectionStringParts[1].Substring("AccountKey=".Length).TrimEnd(';');
-            using (DocumentClient documentClient = new DocumentClient(new Uri(cosmosEndpoint), cosmosAuthKey))
+            using (var cosmosClient = new CosmosClient(cosmosEndpoint, cosmosAuthKey))
             {
+                var container = cosmosClient.GetContainer("testdatabase", "outputtablecollection");
+
                 MarkerMessage marker = new MarkerMessage
                 {
                     MarkerId = Guid.NewGuid()
                 };
-                await documentClient.CreateDocumentAsync(UriFactory.CreateDocumentCollectionUri("testdatabase", "outputtablecollection"), marker);
+                await container.CreateItemAsync(marker);
 
                 await marker.Assert();
             }

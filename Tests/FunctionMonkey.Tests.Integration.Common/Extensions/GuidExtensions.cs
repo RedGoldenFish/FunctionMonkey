@@ -1,8 +1,7 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using Azure.Data.Tables;
 using FunctionMonkey.Tests.Integration.Common.Model;
-using Microsoft.WindowsAzure.Storage;
-using Microsoft.WindowsAzure.Storage.Table;
+using System;
+using System.Threading.Tasks;
 
 namespace FunctionMonkey.Tests.Integration.Common.Extensions
 {
@@ -10,15 +9,14 @@ namespace FunctionMonkey.Tests.Integration.Common.Extensions
     {
         public static async Task RecordMarker(this Guid markerId)
         {
-            CloudStorageAccount storageAccount = CloudStorageAccount.Parse(Environment.GetEnvironmentVariable("storageConnectionString"));
-            CloudTableClient tableClient = storageAccount.CreateCloudTableClient();
-            CloudTable table = tableClient.GetTableReference(Constants.Storage.Table.Markers);
+            TableClient tableClient = new TableClient(Environment.GetEnvironmentVariable("storageConnectionString"),
+                Constants.Storage.Table.Markers);
 
-            await table.ExecuteAsync(TableOperation.InsertOrReplace(new MarkerTableEntity
+            await tableClient.UpsertEntityAsync(new MarkerTableEntity
             {
                 PartitionKey = markerId.ToString(),
                 RowKey = string.Empty
-            }));
+            });
         }
     }
 }

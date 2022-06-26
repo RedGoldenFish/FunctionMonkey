@@ -1,13 +1,11 @@
-﻿using System;
-using System.Net;
-using System.Net.Http;
-using System.Threading.Tasks;
-using Flurl;
+﻿using Flurl;
 using Flurl.Http;
 using FunctionMonkey.Tests.Integration.Common;
 using FunctionMonkey.Tests.Integration.Http;
-using Microsoft.Azure.Documents;
-using Microsoft.Azure.Documents.Client;
+using Microsoft.Azure.Cosmos;
+using System;
+using System.Net;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace FunctionMonkey.Tests.Integration.Cosmos
@@ -23,13 +21,13 @@ namespace FunctionMonkey.Tests.Integration.Cosmos
         {
             Guid markerId = Guid.NewGuid();
 
-            HttpResponseMessage response = await Settings.Host
+            var response = await Settings.Host
                 .AppendPathSegment("outputBindings")
                 .AppendPathSegment("toCosmos")
                 .SetQueryParam("markerId", markerId)
                 .GetAsync();
 
-            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+            Assert.Equal((int)HttpStatusCode.NoContent, response.StatusCode);
             await WaitForMarkerInDatabase(markerId);
         }
 
@@ -38,13 +36,13 @@ namespace FunctionMonkey.Tests.Integration.Cosmos
         {
             Guid markerId = Guid.NewGuid();
 
-            HttpResponseMessage response = await Settings.Host
+            var response = await Settings.Host
                 .AppendPathSegment("outputBindings")
                 .AppendPathSegment("collectionToCosmos")
                 .SetQueryParam("markerId", markerId)
                 .GetAsync();
 
-            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+            Assert.Equal((int)HttpStatusCode.NoContent, response.StatusCode);
             await WaitForMarkerInDatabase(markerId);
         }
 
@@ -58,7 +56,7 @@ namespace FunctionMonkey.Tests.Integration.Cosmos
             string cosmosEndpoint = cosmosConnectionStringParts[0].Substring("AccountEndpoint=".Length);
             string cosmosAuthKey = cosmosConnectionStringParts[1].Substring("AccountKey=".Length).TrimEnd(';');
             CosmosMarker marker = null;
-            using (DocumentClient documentClient = new DocumentClient(new Uri(cosmosEndpoint), cosmosAuthKey))
+            using (var cosmosClient = new CosmosClient(cosmosEndpoint, cosmosAuthKey))
             {
                 int totalDelay = 0;
                 do
@@ -68,16 +66,17 @@ namespace FunctionMonkey.Tests.Integration.Cosmos
 
                     try
                     {
-                        marker = await documentClient.ReadDocumentAsync<CosmosMarker>(UriFactory.CreateDocumentUri(Database, Collection,
-                            markerId.ToString()), new RequestOptions { PartitionKey = new PartitionKey(markerId.ToString()) });
+                        var container = cosmosClient.GetContainer(Database, Collection);
+
+                        marker = await container.ReadItemAsync<CosmosMarker>(markerId.ToString(), new PartitionKey(markerId.ToString()));
                     }
-                    catch (DocumentClientException ex)
+                    catch (CosmosException ex)
                     {
                         if (ex.StatusCode != HttpStatusCode.NotFound)
                         {
                             throw;
                         }
-                    }                    
+                    }
                 } while (totalDelay < maximumDelay && marker == null);
             }
 

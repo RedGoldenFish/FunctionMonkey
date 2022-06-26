@@ -16,7 +16,7 @@ namespace FunctionMonkey.Compiler.Core.HandlebarsHelpers.AzureFunctions
         {
             Handlebars.RegisterHelper("azureAuthenticationType", (writer, context, parameters) =>
             {
-                if (context is HttpFunctionDefinition httpFunctionDefinition)
+                if (context.Value is HttpFunctionDefinition httpFunctionDefinition)
                 {
                     if (!httpFunctionDefinition.Authorization.HasValue)
                     {
@@ -53,7 +53,7 @@ namespace FunctionMonkey.Compiler.Core.HandlebarsHelpers.AzureFunctions
         {
             Handlebars.RegisterHelper("jsonAuthenticationType", (writer, context, parameters) =>
             {
-                if (context is HttpFunctionDefinition httpFunctionDefinition)
+                if (context.Value is HttpFunctionDefinition httpFunctionDefinition)
                 {
                     if (!httpFunctionDefinition.Authorization.HasValue)
                     {

@@ -1,6 +1,4 @@
-﻿using System;
-using System.IO;
-using FunctionMonkey.Abstractions.Builders.Model;
+﻿using FunctionMonkey.Abstractions.Builders.Model;
 using FunctionMonkey.Compiler.Core.Implementation;
 using HandlebarsDotNet;
 
@@ -10,12 +8,12 @@ namespace FunctionMonkey.Compiler.Core.HandlebarsHelpers.AzureFunctions
     {
         public static void Register()
         {
-            Handlebars.RegisterHelper("outputTriggerJson", (writer, context, parameters) => HelperFunction(writer, context));
+            Handlebars.RegisterHelper("outputTriggerJson", (writer, context, _) => HelperFunction(writer, context));
         }
 
-        private static void HelperFunction(TextWriter writer, dynamic context)
+        private static void HelperFunction(EncodedTextWriter writer, Context context)
         {
-            if (context is AbstractFunctionDefinition functionDefinition)
+            if (context.Value is AbstractFunctionDefinition functionDefinition)
             {
                 if (functionDefinition.OutputBinding == null)
                 {
@@ -26,18 +24,18 @@ namespace FunctionMonkey.Compiler.Core.HandlebarsHelpers.AzureFunctions
             }
         }
 
-        private static void WriteTemplate(TextWriter writer, AbstractFunctionDefinition functionDefinition)
+        private static void WriteTemplate(EncodedTextWriter writer, AbstractFunctionDefinition functionDefinition)
         {
             TemplateProvider templateProvider = new TemplateProvider(CompileTargetEnum.AzureFunctions);
             string templateSource = templateProvider.GetJsonOutputParameterTemplate(functionDefinition.OutputBinding);
             if (templateSource != null)
             {
-                Func<object, string> template = Handlebars.Compile(templateSource);
+                var template = Handlebars.Compile(templateSource);
 
                 string output = template(functionDefinition.OutputBinding);
                 writer.Write(",");
                 writer.Write(output);
-            }            
+            }
         }
     }
 }

@@ -1,9 +1,8 @@
-﻿using System.IO;
+﻿using FunctionMonkey.Model;
+using HandlebarsDotNet;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
-using FunctionMonkey.Model;
-using HandlebarsDotNet;
 
 namespace FunctionMonkey.Compiler.Core.HandlebarsHelpers.AzureFunctions
 {
@@ -11,18 +10,18 @@ namespace FunctionMonkey.Compiler.Core.HandlebarsHelpers.AzureFunctions
     {
         public static void Register()
         {
-            Handlebars.RegisterHelper("httpVerbs", (writer, context, parameters) => HelperFunction(writer, context, false, parameters));
-            Handlebars.RegisterHelper("lowerHttpVerbs", (writer, context, parameters) => HelperFunction(writer, context, true, parameters));
+            Handlebars.RegisterHelper("httpVerbs", (writer, context, _) => HelperFunction(writer, context, false));
+            Handlebars.RegisterHelper("lowerHttpVerbs", (writer, context, _) => HelperFunction(writer, context, true));
         }
 
-        private static void HelperFunction(TextWriter writer, dynamic context, bool toLowerCase, object[] parameters)
+        private static void HelperFunction(EncodedTextWriter writer, Context context, bool toLowerCase)
         {
-            if (context is HttpFunctionDefinition httpFunctionDefinition)
+            if (context.Value is HttpFunctionDefinition httpFunctionDefinition)
             {
                 HttpMethod[] verbs = httpFunctionDefinition.Verbs.ToArray();
                 if (verbs.Length == 0)
                 {
-                    verbs = new[] {HttpMethod.Get};
+                    verbs = new[] { HttpMethod.Get };
                 }
 
                 StringBuilder sb = new StringBuilder($"\"{VerbToString(verbs[0], toLowerCase)}\"");

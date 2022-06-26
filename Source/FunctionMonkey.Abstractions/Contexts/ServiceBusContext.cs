@@ -15,7 +15,7 @@ namespace FunctionMonkey.Abstractions.Contexts
         /// <summary>
         /// The date and time the message was enqueued
         /// </summary>
-        public DateTime EnqueuedTimeUTc { get; set; }
+        public DateTimeOffset EnqueuedTimeUTc { get; set; }
 
         /// <summary>
         /// The ID of the message

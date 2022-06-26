@@ -1,11 +1,9 @@
-using System;
-using AzureFromTheTrenches.Commanding.Abstractions;
 using FunctionMonkey.Abstractions;
 using FunctionMonkey.Abstractions.Builders;
 using FunctionMonkey.Abstractions.Builders.Model;
 using FunctionMonkey.Commanding.Cosmos.Abstractions;
 using FunctionMonkey.Model;
-using Newtonsoft.Json.Serialization;
+using System;
 
 namespace FunctionMonkey.Builders
 {
@@ -14,7 +12,7 @@ namespace FunctionMonkey.Builders
         private readonly ConnectionStringSettingNames _connectionStringSettingNames;
         private readonly ICosmosDbFunctionBuilder _underlyingBuilder;
         private readonly CosmosDbFunctionDefinition _functionDefinition;
-        
+
         public CosmosDbFunctionOptionBuilder(
             ConnectionStringSettingNames connectionStringSettingNames,
             ICosmosDbFunctionBuilder underlyingBuilder,
@@ -24,13 +22,13 @@ namespace FunctionMonkey.Builders
             _underlyingBuilder = underlyingBuilder;
             _functionDefinition = functionDefinition;
         }
-        
+
         public ICosmosDbFunctionOptionBuilder<TCommand> ChangeFeedFunction<TCommand>(string collectionName, string databaseName,
             string leaseCollectionName = "leases", string leaseDatabaseName = null,
             bool createLeaseCollectionIfNotExists = false, bool startFromBeginning = false, bool convertToPascalCase = false,
             string leaseCollectionPrefix = null, int? maxItemsPerInvocation = null, int? feedPollDelay = null,
             int? leaseAcquireInterval = null, int? leaseExpirationInterval = null, int? leaseRenewInterval = null,
-            int? checkpointFrequency = null, int? leasesCollectionThroughput = null,
+            int? checkpointInterval = null, int? leasesCollectionThroughput = null,
             bool trackRemainingWork = true,
             string remainingWorkCronExpression = "*/1 * * * * *")
         {
@@ -39,7 +37,7 @@ namespace FunctionMonkey.Builders
                 createLeaseCollectionIfNotExists, startFromBeginning, convertToPascalCase,
                 leaseCollectionPrefix, maxItemsPerInvocation, feedPollDelay,
                 leaseAcquireInterval, leaseExpirationInterval, leaseRenewInterval,
-                checkpointFrequency, leasesCollectionThroughput, trackRemainingWork, remainingWorkCronExpression);
+                checkpointInterval, leasesCollectionThroughput, trackRemainingWork, remainingWorkCronExpression);
         }
 
         public ICosmosDbFunctionOptionBuilder<TCommand> ChangeFeedFunction<TCommand, TCosmosDbErrorHandler>(string collectionName, string databaseName,
@@ -47,7 +45,7 @@ namespace FunctionMonkey.Builders
             bool createLeaseCollectionIfNotExists = false, bool startFromBeginning = false, bool convertToPascalCase = false,
             string leaseCollectionPrefix = null, int? maxItemsPerInvocation = null, int? feedPollDelay = null,
             int? leaseAcquireInterval = null, int? leaseExpirationInterval = null, int? leaseRenewInterval = null,
-            int? checkpointFrequency = null, int? leasesCollectionThroughput = null,
+            int? checkpointInterval = null, int? leasesCollectionThroughput = null,
             bool trackRemainingWork = true,
             string remainingWorkCronExpression = "*/1 * * * * *") where TCosmosDbErrorHandler : ICosmosDbErrorHandler
         {
@@ -56,7 +54,7 @@ namespace FunctionMonkey.Builders
                 createLeaseCollectionIfNotExists, startFromBeginning, convertToPascalCase,
                 leaseCollectionPrefix, maxItemsPerInvocation, feedPollDelay,
                 leaseAcquireInterval, leaseExpirationInterval, leaseRenewInterval,
-                checkpointFrequency, leasesCollectionThroughput, trackRemainingWork, remainingWorkCronExpression);
+                checkpointInterval, leasesCollectionThroughput, trackRemainingWork, remainingWorkCronExpression);
         }
 
         public ICosmosDbFunctionOptionBuilder<TCommandOuter> Options(Action<IFunctionOptionsBuilder> options)

@@ -14,14 +14,7 @@ namespace {{Namespace}}
 
         [FunctionName("{{Name}}")]
         public async Task Run(
-            [QueueTrigger("{{QueueName}}", Connection = "{{ConnectionStringName}}")]string queueItem,
-            DateTimeOffset expirationTime,
-            DateTimeOffset insertionTime,
-            DateTimeOffset nextVisibleTime,
-            string queueTrigger,
-            string id,
-            string popReceipt,
-            int dequeueCount,
+            [QueueTrigger("{{QueueName}}", Connection = "{{ConnectionStringName}}")]Azure.Storage.Queues.Models.QueueMessage queueItem,
             ILogger log,
             System.Threading.CancellationToken cancellationToken,
             ExecutionContext executionContext
@@ -32,11 +25,11 @@ namespace {{Namespace}}
             FunctionMonkey.Runtime.FunctionProvidedLogger.Value = log;
             
             {{CommandTypeName}} command;
-            if (!System.String.IsNullOrWhiteSpace(queueItem))
+            if (queueItem != null)
             {
                 var serializer = (FunctionMonkey.Abstractions.ISerializer)
-                    FunctionMonkey.Runtime.ServiceProvider.GetService(typeof({{CommandDeseriaizerTypeName}}));
-                command = serializer.Deserialize<{{CommandTypeName}}>(queueItem, false); // we don't enforce security properties from message buses
+                    FunctionMonkey.Runtime.ServiceProvider.GetService(typeof({{CommandDeserializerTypeName}}));
+                command = serializer.Deserialize<{{CommandTypeName}}>(queueItem.MessageText, false); // we don't enforce security properties from message buses
             }
             else
             {
@@ -45,7 +38,7 @@ namespace {{Namespace}}
 
             var contextSetter = (FunctionMonkey.Abstractions.IContextSetter)
                 FunctionMonkey.Runtime.ServiceProvider.GetService(typeof(FunctionMonkey.Abstractions.IContextSetter));
-            contextSetter.SetStorageQueueContext(expirationTime, insertionTime, nextVisibleTime, queueTrigger, id, popReceipt, dequeueCount);
+            contextSetter.SetStorageQueueContext(queueItem.ExpiresOn, queueItem.InsertedOn, queueItem.NextVisibleOn, queueItem.MessageId, queueItem.PopReceipt, queueItem.DequeueCount);
             contextSetter.SetExecutionContext(executionContext.FunctionDirectory,
                 executionContext.FunctionAppDirectory,
                 executionContext.FunctionName,
@@ -62,7 +55,7 @@ namespace {{Namespace}}
             var validationResult = validator.Validate(command);
             if (!validationResult.IsValid)
             {
-                throw new FunctionMonkey.Commanding.Abstractions.Validation.ValidationException("{{Name}}", validationResult, id);
+                throw new FunctionMonkey.Commanding.Abstractions.Validation.ValidationException("{{Name}}", validationResult, queueItem.MessageId);
             }
             {{/if}}
             

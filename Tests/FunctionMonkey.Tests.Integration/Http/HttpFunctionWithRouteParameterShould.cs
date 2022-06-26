@@ -1,10 +1,9 @@
-﻿using System;
-using System.Net;
-using System.Net.Http;
-using System.Threading.Tasks;
-using Flurl;
+﻿using Flurl;
 using Flurl.Http;
 using FunctionMonkey.Tests.Integration.Http.Helpers;
+using System;
+using System.Net;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace FunctionMonkey.Tests.Integration.Http
@@ -106,14 +105,14 @@ namespace FunctionMonkey.Tests.Integration.Http
             // there is a bug in Azure Functions - using a GUID as a route parameter doesn't work
             // Function Monkey will work round this by accepting them as strings in the trigger
             // and parsing them internally
-            HttpResponseMessage response = await Settings.Host
+            var response = await Settings.Host
                 .AppendPathSegment("routeParameters")
                 .AppendPathSegment("guids")
                 .AppendPathSegment("boo")
                 .AllowHttpStatus(HttpStatusCode.BadRequest)
                 .GetAsync();
 
-            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+            Assert.Equal((int)HttpStatusCode.BadRequest, response.StatusCode);
         }
 
         [Fact]
@@ -123,7 +122,7 @@ namespace FunctionMonkey.Tests.Integration.Http
             // there is a bug in Azure Functions - using a GUID as a route parameter doesn't work
             // Function Monkey will work round this by accepting them as strings in the trigger
             // and parsing them internally
-            HttpResponseMessage response = await Settings.Host
+            var response = await Settings.Host
                 .AppendPathSegment("routeParameters")
                 .AppendPathSegment("guids")
                 .AppendPathSegment(guidOne)
@@ -131,7 +130,7 @@ namespace FunctionMonkey.Tests.Integration.Http
                 .AllowHttpStatus(HttpStatusCode.BadRequest)
                 .GetAsync();
 
-            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+            Assert.Equal((int)HttpStatusCode.BadRequest, response.StatusCode);
         }
     }
 }

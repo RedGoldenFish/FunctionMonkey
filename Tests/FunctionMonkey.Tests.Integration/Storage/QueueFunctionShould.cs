@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Azure.Storage.Queues;
 using FunctionMonkey.Tests.Integration.Common;
 using FunctionMonkey.Tests.Integration.Storage.Helpers;
-using Microsoft.WindowsAzure.Storage.Queue;
-using Newtonsoft.Json;
+using System;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace FunctionMonkey.Tests.Integration.Storage
@@ -19,11 +16,9 @@ namespace FunctionMonkey.Tests.Integration.Storage
             {
                 MarkerId = Guid.NewGuid()
             };
-            string json = JsonConvert.SerializeObject(marker);
 
-            CloudQueueClient queueClient = StorageAccount.CreateCloudQueueClient();
-            CloudQueue queue = queueClient.GetQueueReference("testqueue");
-            await queue.AddMessageAsync(new CloudQueueMessage(json));
+            QueueClient queue = new QueueClient(Settings.StorageConnectionString, "testqueue");
+            await queue.SendMessageAsync(new BinaryData(marker));
 
             await marker.Assert();
         }

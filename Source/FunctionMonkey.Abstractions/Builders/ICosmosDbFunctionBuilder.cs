@@ -1,5 +1,4 @@
-﻿using AzureFromTheTrenches.Commanding.Abstractions;
-using FunctionMonkey.Commanding.Cosmos.Abstractions;
+﻿using FunctionMonkey.Commanding.Cosmos.Abstractions;
 
 namespace FunctionMonkey.Abstractions.Builders
 {
@@ -33,7 +32,7 @@ namespace FunctionMonkey.Abstractions.Builders
         /// <param name="leaseAcquireInterval">When set, it defines, in milliseconds, the interval to kick off a task to compute if partitions are distributed evenly among known host instances. Default is 13000 (13 seconds).</param>
         /// <param name="leaseExpirationInterval">When set, it defines, in milliseconds, the interval for which the lease is taken on a lease representing a partition. If the lease is not renewed within this interval, it will cause it to expire and ownership of the partition will move to another instance. Default is 60000 (60 seconds)</param>
         /// <param name="leaseRenewInterval">When set, it defines, in milliseconds, the renew interval for all leases for partitions currently held by an instance. Default is 17000 (17 seconds).</param>
-        /// <param name="checkpointFrequency">When set, it defines, in milliseconds, the interval between lease checkpoints. Default is always after a successful Function call.</param>
+        /// <param name="checkpointInterval">When set, it defines, in milliseconds, the interval between lease checkpoints. Default is always after a successful Function call.</param>
         /// <param name="leasesCollectionThroughput">Defines the amount of Request Units to assign when the leases collection is created. This setting is only used When createLeaseCollectionIfNotExists is set to true. This parameter is automatically set when the binding is created using the portal.</param>
         /// <param name="trackRemainingWork">If true (default value) this will create a timer function that will output a remaining work estimate to the log - the metric name will be of the form {functionName}RemainingWork </param>
         /// <param name="remainingWorkCronExpression">The frequency that the monitor timer runs - defaults to once per every 5 seconds</param>
@@ -51,7 +50,7 @@ namespace FunctionMonkey.Abstractions.Builders
             int? leaseAcquireInterval = null,
             int? leaseExpirationInterval = null,
             int? leaseRenewInterval = null,
-            int? checkpointFrequency = null,
+            int? checkpointInterval = null,
             int? leasesCollectionThroughput = null,
             bool trackRemainingWork = false,
             string remainingWorkCronExpression = "*/5 * * * * *"
@@ -86,7 +85,7 @@ namespace FunctionMonkey.Abstractions.Builders
         /// <param name="leaseAcquireInterval">When set, it defines, in milliseconds, the interval to kick off a task to compute if partitions are distributed evenly among known host instances. Default is 13000 (13 seconds).</param>
         /// <param name="leaseExpirationInterval">When set, it defines, in milliseconds, the interval for which the lease is taken on a lease representing a partition. If the lease is not renewed within this interval, it will cause it to expire and ownership of the partition will move to another instance. Default is 60000 (60 seconds)</param>
         /// <param name="leaseRenewInterval">When set, it defines, in milliseconds, the renew interval for all leases for partitions currently held by an instance. Default is 17000 (17 seconds).</param>
-        /// <param name="checkpointFrequency">When set, it defines, in milliseconds, the interval between lease checkpoints. Default is always after a successful Function call.</param>
+        /// <param name="checkpointInterval">When set, it defines, in milliseconds, the interval between lease checkpoints. Default is always after a successful Function call.</param>
         /// <param name="leasesCollectionThroughput">Defines the amount of Request Units to assign when the leases collection is created. This setting is only used When createLeaseCollectionIfNotExists is set to true. This parameter is automatically set when the binding is created using the portal.</param>
         /// <param name="trackRemainingWork">If true (default value) this will create a timer function that will output a remaining work estimate to the log - the metric name will be of the form {functionName}RemainingWork </param>
         /// <param name="remainingWorkCronExpression">The frequency that the monitor timer runs - defaults to once per every 5 seconds</param>
@@ -104,7 +103,7 @@ namespace FunctionMonkey.Abstractions.Builders
             int? leaseAcquireInterval = null,
             int? leaseExpirationInterval = null,
             int? leaseRenewInterval = null,
-            int? checkpointFrequency = null,
+            int? checkpointInterval = null,
             int? leasesCollectionThroughput = null,
             bool trackRemainingWork = false,
             string remainingWorkCronExpression = "*/5 * * * * *"

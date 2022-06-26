@@ -1,12 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Threading.Tasks;
 using AzureFromTheTrenches.Commanding.Abstractions;
 using FunctionMonkey.Abstractions.Builders.Model;
-using FunctionMonkey.Compiler.Core.Implementation.OpenApi;
 using FunctionMonkey.Model;
 using HandlebarsDotNet;
 using Microsoft.AspNetCore.Builder;
@@ -18,6 +11,11 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace FunctionMonkey.Compiler.Core.Implementation.AspNetCore
 {
@@ -26,19 +24,19 @@ namespace FunctionMonkey.Compiler.Core.Implementation.AspNetCore
         public AspNetCoreAssemblyCompiler(ICompilerLog compilerLog, ITemplateProvider templateProvider = null) : base(compilerLog, templateProvider)
         {
         }
-        
+
         protected override List<SyntaxTree> CompileSource(
             IReadOnlyCollection<AbstractFunctionDefinition> functionDefinitions,
             string newAssemblyNamespace,
             DirectoryInfo outputAuthoredSourceFolder)
         {
             List<SyntaxTree> syntaxTrees = new List<SyntaxTree>();
-            
+
             HttpFunctionDefinition[] httpFunctions = functionDefinitions
                 .Where(x => x is HttpFunctionDefinition)
                 .Cast<HttpFunctionDefinition>()
                 .ToArray();
-            
+
             syntaxTrees.Add(CreateStartup(newAssemblyNamespace, outputAuthoredSourceFolder, httpFunctions));
             foreach (HttpFunctionDefinition httpFunctionDefinition in httpFunctions)
             {
@@ -47,7 +45,7 @@ namespace FunctionMonkey.Compiler.Core.Implementation.AspNetCore
 
             return syntaxTrees;
         }
-        
+
         protected override IReadOnlyCollection<string> BuildCandidateReferenceList(CompilerOptions compilerOptions, bool isFSharpProject)
         {
             HashSet<string> locations = new HashSet<string>
@@ -87,13 +85,13 @@ namespace FunctionMonkey.Compiler.Core.Implementation.AspNetCore
 
             return locations;
         }
-        
+
         private SyntaxTree CreateStartup(string namespaceName,
             DirectoryInfo directoryInfo,
             IReadOnlyCollection<HttpFunctionDefinition> functions)
         {
-            string startupTemplateSource = TemplateProvider.GetTemplate("startup","csharp");
-            Func<object, string> template = Handlebars.Compile(startupTemplateSource);
+            string startupTemplateSource = TemplateProvider.GetTemplate("startup", "csharp");
+            var template = Handlebars.Compile(startupTemplateSource);
 
             var startupOptions = new
             {
@@ -104,21 +102,21 @@ namespace FunctionMonkey.Compiler.Core.Implementation.AspNetCore
             };
             string outputCode = template(startupOptions);
             OutputDiagnosticCode(directoryInfo, "Startup", outputCode);
-            
-            SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(outputCode, path:$"Startup.cs");
+
+            SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(outputCode, path: $"Startup.cs");
             return syntaxTree;
         }
-        
+
         private SyntaxTree CreateController(string namespaceName, DirectoryInfo directoryInfo, HttpFunctionDefinition httpFunctionDefinition)
         {
-            string startupTemplateSource = TemplateProvider.GetTemplate("controller","csharp");
-            Func<object, string> template = Handlebars.Compile(startupTemplateSource);
+            string startupTemplateSource = TemplateProvider.GetTemplate("controller", "csharp");
+            var template = Handlebars.Compile(startupTemplateSource);
             string filenameWithoutExtension = $"{httpFunctionDefinition.Name}Controller";
 
             string outputCode = template(httpFunctionDefinition);
             OutputDiagnosticCode(directoryInfo, filenameWithoutExtension, outputCode);
-            
-            SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(outputCode, path:$"{filenameWithoutExtension}.cs");
+
+            SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(outputCode, path: $"{filenameWithoutExtension}.cs");
             return syntaxTree;
         }
     }

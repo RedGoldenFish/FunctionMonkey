@@ -10,7 +10,7 @@ namespace FunctionMonkey.Compiler.Core.HandlebarsHelpers.AspNetCore
         {
             Handlebars.RegisterHelper("mappedHeaderNameForProperty", (writer, context, parameters) =>
             {
-                if (parameters[0] is HeaderBindingConfiguration headerConfig && context is HttpParameter httpParameter)
+                if (parameters[0] is HeaderBindingConfiguration headerConfig && context.Value is HttpParameter httpParameter)
                 {
                     if (headerConfig.PropertyFromHeaderMappings.TryGetValue(httpParameter.Name, out string headerName))
                     {

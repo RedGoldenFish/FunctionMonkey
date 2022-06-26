@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.Loader;
 
+
 namespace FunctionMonkey.Compiler
 {
     class Program
@@ -13,7 +14,7 @@ namespace FunctionMonkey.Compiler
             Console,
             Json
         }
-        
+
         static void Main(string[] args)
         {
             CompilerLog compilerLog = new CompilerLog();
@@ -21,9 +22,9 @@ namespace FunctionMonkey.Compiler
             LogOutputType outputType = args.Any(x => x.ToLower() == "--jsonoutput")
                 ? LogOutputType.Json
                 : LogOutputType.Console;
-            
+
             string outputBinaryDirectory = String.Empty;
-            
+
             if (args.Length == 0)
             {
                 compilerLog.Error("Must specify the assembly file to build the functions from");
@@ -37,7 +38,7 @@ namespace FunctionMonkey.Compiler
                     // TODO: convert the input to an absolute path if necessary
                     Assembly assembly = AssemblyLoadContext.Default.LoadFromAssemblyPath(inputAssemblyFile);
                     outputBinaryDirectory = Path.GetDirectoryName(assembly.Location);
-            
+
                     // Not sure why the AssemblyLoadContext doesn't deal with the below. I thought it did. Clearly not.
                     // TODO: Have a chat with someone who knows a bit more about this.
                     AssemblyLoadContext.Default.Resolving += (context, name) =>
@@ -48,7 +49,7 @@ namespace FunctionMonkey.Compiler
                         {
                             Assembly referencedAssembly = context.LoadFromAssemblyPath(path);
                             return referencedAssembly;
-                        }                
+                        }
                         return null;
                     };
 

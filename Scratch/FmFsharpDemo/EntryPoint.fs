@@ -43,8 +43,8 @@ module EntryPoint =
 
     let app = functionApp {
         // diagnostics
-        outputSourcePath "/Users/jamesrandall/code/authoredSource"
-        outputOpenApiPath "/Users/jamesrandall/code/authoredSource"
+        outputSourcePath "C:/Repos/cgoconseils/FunctionMonkey/code/authoredSource"
+        outputOpenApiPath "C:/Repos/cgoconseils/FunctionMonkey/code/authoredSource"
         // open api
         openApi "ToDo" "1.0.0"
         openApiUserInterface "/openapi"

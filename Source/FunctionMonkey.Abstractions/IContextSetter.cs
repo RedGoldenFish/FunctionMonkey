@@ -13,20 +13,20 @@ namespace FunctionMonkey.Abstractions
         /// Sets the service bus context
         /// </summary>
         void SetServiceBusContext(int deliveryCount,
-            DateTime enqueuedTimeUtc,
+            DateTimeOffset enqueuedTimeUtc,
             string messageId,
             string lockToken);
 
         /// <summary>
         /// Sets the storage queue context
         /// </summary>
-        void SetStorageQueueContext(DateTimeOffset expirationTime,
-            DateTimeOffset insertionTime,
-            DateTimeOffset nextVisibleTime,
+        void SetStorageQueueContext(DateTimeOffset? expirationTime,
+            DateTimeOffset? insertionTime,
+            DateTimeOffset? nextVisibleTime,
             string queueTrigger,
             string id,
             string popReceipt,
-            int dequeueCount);
+            long dequeueCount);
 
         /// <summary>
         /// Sets the blob trigger context

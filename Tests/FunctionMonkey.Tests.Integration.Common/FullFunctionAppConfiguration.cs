@@ -1,10 +1,10 @@
-using System.Net.Http;
 using FunctionMonkey.Abstractions.Builders;
 using FunctionMonkey.Tests.Integration.Common.Commands;
 using FunctionMonkey.Tests.Integration.Common.Commands.EventHubs;
 using FunctionMonkey.Tests.Integration.Common.Commands.OutputBindings;
 using FunctionMonkey.Tests.Integration.Common.Commands.SignalR;
 using FunctionMonkey.Tests.Integration.Common.Commands.TestInfrastructure;
+using System.Net.Http;
 
 namespace FunctionMonkey.Tests.Integration.Common
 {
@@ -17,7 +17,7 @@ namespace FunctionMonkey.Tests.Integration.Common
                     // Service Bus
                     .HttpFunction<HttpTriggerServiceBusQueueOutputCommand>("/toServiceBusQueue")
                     .OutputTo.ServiceBusQueue(Constants.ServiceBus.MarkerQueue)
-                    
+
                     .HttpFunction<HttpTriggerServiceBusQueueOutputWithConverterCommand>("/toServiceBusQueueWithConverter")
                     .OutputTo.ServiceBusQueue(Constants.ServiceBus.MarkerQueue)
                     .OutputBindingConverter<OptionalValueCommandOutputBindingConverter>()
@@ -71,12 +71,12 @@ namespace FunctionMonkey.Tests.Integration.Common
                     .HttpFunction<HttpTriggerStorageTableCollectionOutputCommand>("/collectionToStorageTable")
                     .OutputTo.StorageTable(Constants.Storage.Table.Markers)
 
-                    // Cosmos
-                    .HttpFunction<HttpTriggerCosmosOutputCommand>("/toCosmos")
-                    .OutputTo.CosmosDb(Constants.Cosmos.Collection, Constants.Cosmos.Database)
+                // Cosmos
+                .HttpFunction<HttpTriggerCosmosOutputCommand>("/toCosmos")
+                .OutputTo.CosmosDb(Constants.Cosmos.Collection, Constants.Cosmos.Database)
 
-                    .HttpFunction<HttpTriggerCosmosCollectionOutputCommand>("/collectionToCosmos")
-                    .OutputTo.CosmosDb(Constants.Cosmos.Collection, Constants.Cosmos.Database)
+                .HttpFunction<HttpTriggerCosmosCollectionOutputCommand>("/collectionToCosmos")
+                .OutputTo.CosmosDb(Constants.Cosmos.Collection, Constants.Cosmos.Database)
                 )
 
                 // SignalR tests

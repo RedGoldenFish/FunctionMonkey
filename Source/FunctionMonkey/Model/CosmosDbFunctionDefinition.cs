@@ -1,7 +1,6 @@
-﻿using System;
+﻿using FunctionMonkey.Abstractions.Builders.Model;
+using System;
 using System.Collections.Generic;
-using System.Text;
-using FunctionMonkey.Abstractions.Builders.Model;
 
 namespace FunctionMonkey.Model
 {
@@ -11,7 +10,7 @@ namespace FunctionMonkey.Model
         {
             TrackRemainingWork = true;
         }
-        
+
         public CosmosDbFunctionDefinition(Type commandType, Type resultType) : base("CosmosFn", commandType, resultType)
         {
         }
@@ -50,7 +49,7 @@ namespace FunctionMonkey.Model
         public int? LeaseAcquireInterval { get; set; }
         public int? LeaseExpirationInterval { get; set; }
         public int? LeaseRenewInterval { get; set; }
-        public int? CheckpointFrequency { get; set; }
+        public int? CheckpointInterval { get; set; }
         public int? LeasesCollectionThroughput { get; set; }
         public string ErrorHandlerTypeName { get; set; }
         public Type ErrorHandlerType { get; set; }

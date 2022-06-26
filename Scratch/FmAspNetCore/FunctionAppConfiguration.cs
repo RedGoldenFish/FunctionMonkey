@@ -1,4 +1,3 @@
-using System.Net.Http;
 using FmAspNetCore.Commands;
 using FmAspNetCore.Services;
 using FunctionMonkey.Abstractions;
@@ -6,6 +5,7 @@ using FunctionMonkey.Abstractions.Builders;
 using FunctionMonkey.Compiler.Core;
 using FunctionMonkey.TokenValidator;
 using Microsoft.Extensions.DependencyInjection;
+using System.Net.Http;
 
 namespace FmAspNetCore
 {
@@ -16,7 +16,7 @@ namespace FmAspNetCore
             builder
                 .CompilerOptions(options => options
                     .HttpTarget(CompileTargetEnum.AspNetCore) // the magic!
-                    //.OutputSourceTo(@"/Users/jamesrandall/code/authoredSource")
+                                                              //.OutputSourceTo(@"C:/Repos/cgoconseils/FunctionMonkey/code/authoredSource")
                 )
                 .Authorization(auth => auth
                     .AuthorizationDefault(AuthorizationTypeEnum.TokenValidation)

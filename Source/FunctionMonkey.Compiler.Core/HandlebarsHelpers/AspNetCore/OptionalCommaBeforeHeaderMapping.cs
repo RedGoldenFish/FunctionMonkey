@@ -1,12 +1,7 @@
-﻿using System;
-using System.Globalization;
-using System.IO;
-using System.Linq;
-using System.Net.Http;
-using System.Text;
-using FunctionMonkey.Compiler.Core.Extensions;
-using FunctionMonkey.Model;
+﻿using FunctionMonkey.Model;
 using HandlebarsDotNet;
+using System;
+using System.Linq;
 
 namespace FunctionMonkey.Compiler.Core.HandlebarsHelpers.AspNetCore
 {
@@ -14,12 +9,12 @@ namespace FunctionMonkey.Compiler.Core.HandlebarsHelpers.AspNetCore
     {
         public static void Register()
         {
-            Handlebars.RegisterHelper("optionalCommaBeforeHeaderMapping", (writer, context, parameters) => HelperFunction(writer, context, parameters));
+            Handlebars.RegisterHelper("optionalCommaBeforeHeaderMapping", (writer, context, _) => HelperFunction(writer, context));
         }
 
-        private static void HelperFunction(TextWriter writer, dynamic context, object[] parameters)
+        private static void HelperFunction(EncodedTextWriter writer, Context context)
         {
-            if (context is HttpFunctionDefinition httpFunctionDefinition)
+            if (context.Value is HttpFunctionDefinition httpFunctionDefinition)
             {
                 if ((httpFunctionDefinition.QueryParametersWithoutHeaderMapping.Any() ||
                     httpFunctionDefinition.RouteParameters.Any() ||

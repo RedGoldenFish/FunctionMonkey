@@ -58,7 +58,7 @@ let validateToken (bearerToken:string) =
     ]))
 
 let app = functionApp {
-    outputSourcePath "/Users/jamesrandall/Code/authoredSource"
+    outputSourcePath "C:/Repos/cgoconseils/FunctionMonkey/code/authoredSource"
     defaultAuthorizationMode Anonymous
     openApi "F# Integration Test Functions" "1.0.0"
     openApiUserInterface "/openapi"

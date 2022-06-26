@@ -1,8 +1,7 @@
-﻿using System.Net;
-using System.Net.Http;
-using System.Threading.Tasks;
-using Flurl;
+﻿using Flurl;
 using Flurl.Http;
+using System.Net;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace FunctionMonkey.Tests.Integration.Http
@@ -12,11 +11,11 @@ namespace FunctionMonkey.Tests.Integration.Http
         [Fact]
         public async Task Return200()
         {
-            HttpResponseMessage response = await Settings.Host
+            var response = await Settings.Host
                 .AppendPathSegment("HttpHttpCommandWithNoRoute")
                 .GetAsync();
 
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Equal((int)HttpStatusCode.OK, response.StatusCode);
         }
     }
 }

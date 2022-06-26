@@ -255,7 +255,7 @@ module Configuration =
                 ?leaseAcquireInterval,
                 ?leaseExpirationInterval,
                 ?leaseRenewInterval,
-                ?checkpointFrequency,
+                ?checkpointInterval,
                 ?leasesCollectionThroughput,
                 ?remainingWorkCronExpression
             ) : CosmosDbFunction =
@@ -289,7 +289,7 @@ module Configuration =
                     leaseAcquireInterval = leaseAcquireInterval
                     leaseExpirationInterval = leaseExpirationInterval
                     leaseRenewInterval = leaseRenewInterval
-                    checkpointFrequency = checkpointFrequency
+                    checkpointInterval = checkpointInterval
                     leasesCollectionThroughput = leasesCollectionThroughput
                     remainingWorkCronExpression = remainingWorkCronExpression |> defaultValue "*/5 * * * * *"
                 }

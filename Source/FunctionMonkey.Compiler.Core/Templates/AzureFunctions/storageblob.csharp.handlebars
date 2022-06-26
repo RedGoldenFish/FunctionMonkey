@@ -41,7 +41,7 @@ namespace {{Namespace}}
             if (!System.String.IsNullOrWhiteSpace(json))
             {
                 var serializer = (FunctionMonkey.Abstractions.ISerializer)
-                    FunctionMonkey.Runtime.ServiceProvider.GetService(typeof({{CommandDeseriaizerTypeName}}));
+                    FunctionMonkey.Runtime.ServiceProvider.GetService(typeof({{CommandDeserializerTypeName}}));
                 command = serializer.Deserialize<{{CommandTypeName}}>(json, false); // we don't enforce security properties from message buses
             }
             else

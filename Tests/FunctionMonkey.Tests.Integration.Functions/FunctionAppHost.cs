@@ -12,7 +12,7 @@ namespace FunctionMonkey.Tests.Integration.Functions
             builder
                 .CompilerOptions(options => options
                     .HttpTarget(CompileTargetEnum.AzureFunctions)
-                    .OutputSourceTo(@"/Users/jamesrandall/code/authoredSource")
+                    .OutputSourceTo(@"C:/Repos/cgoconseils/FunctionMonkey/code/authoredSource")
                 )
                 .UseFunctionAppConfiguration<FullFunctionAppConfiguration>();
         }

@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
 using AzureFromTheTrenches.Commanding;
 using AzureFromTheTrenches.Commanding.Abstractions;
 using FunctionMonkey.Abstractions;
@@ -16,7 +12,13 @@ using FunctionMonkey.Compiler.Core.Implementation.AzureFunctions;
 using FunctionMonkey.Infrastructure;
 using FunctionMonkey.Model;
 using FunctionMonkey.Model.OutputBindings;
+using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.DependencyInjection;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using System.Text.Json;
 
 namespace FunctionMonkey.Compiler.Core
 {
@@ -29,7 +31,7 @@ namespace FunctionMonkey.Compiler.Core
         private readonly ICommandRegistry _commandRegistry;
         private readonly ITriggerReferenceProvider _triggerReferenceProvider;
         private readonly string _outputBinaryFolder;
-        
+
         public Compiler(Assembly configurationSourceAssembly,
             string outputBinaryFolder,
             ICompilerLog compilerLog)
@@ -55,7 +57,7 @@ namespace FunctionMonkey.Compiler.Core
             IFunctionAppConfiguration configuration = null;
             FunctionAppHostBuilder appHostBuilder = null;
             IFunctionAppHost appHost = ConfigurationLocator.FindFunctionAppHost(_configurationSourceAssembly);
-            
+
             if (appHost != null)
             {
                 appHostBuilder = new FunctionAppHostBuilder();
@@ -119,13 +121,13 @@ namespace FunctionMonkey.Compiler.Core
             }
 
             PostBuildPatcher.EnsureFunctionsHaveUniqueNames(functionCompilerMetadata.FunctionDefinitions);
-            
+
             IReadOnlyCollection<string> externalAssemblies =
                 GetExternalAssemblyLocations(functionCompilerMetadata.FunctionDefinitions);
 
             ITargetCompiler targetCompiler = functionCompilerMetadata.CompilerOptions.HttpTarget == CompileTargetEnum.AzureFunctions
                 ? (ITargetCompiler)new AzureFunctionsCompiler(_compilerLog)
-                : new AspNetCoreCompiler(_compilerLog); 
+                : new AspNetCoreCompiler(_compilerLog);
 
             return targetCompiler.CompileAssets(functionCompilerMetadata,
                 newAssemblyNamespace,
@@ -166,11 +168,11 @@ namespace FunctionMonkey.Compiler.Core
                                 foundErrors = true;
                             }
                         }
-                        
+
                     }
                 }
             }
-            
+
 
             return !foundErrors;
         }
@@ -190,8 +192,8 @@ namespace FunctionMonkey.Compiler.Core
         private bool ValidateCommandTypes(FunctionHostBuilder builder)
         {
             // TODO: Add a check in the assembvly compile type checker to make sure that Negotiate<TCommand> type commands have a return type of SignalRNegotiateResponse
-            
-            
+
+
             ConstructorInfo constructor = builder.Options.MediatorTypeSafetyEnforcer.GetConstructor(new Type[0]);
             if (constructor == null)
             {
@@ -239,16 +241,24 @@ namespace FunctionMonkey.Compiler.Core
             }
 
             return !hasErrors;
-        }        
+        }
 
         private IReadOnlyCollection<string> GetExternalAssemblyLocations(
             IReadOnlyCollection<AbstractFunctionDefinition> functionDefinitions)
         {
             HashSet<Assembly> assemblies = new HashSet<Assembly>();
 
+            assemblies.Add(typeof(BinaryData).Assembly);
+            assemblies.Add(typeof(JsonSerializerOptions).Assembly);
+
             foreach (AbstractFunctionDefinition functionDefinition in functionDefinitions)
             {
-                assemblies.Add(_triggerReferenceProvider.GetTriggerReference(functionDefinition));
+                var triggerReferences = _triggerReferenceProvider.GetTriggerReference(functionDefinition);
+                foreach (var assembly in triggerReferences)
+                {
+                    assemblies.Add(assembly);
+                }
+
                 assemblies.Add(functionDefinition.CommandType.Assembly);
                 foreach (Type commandInterface in functionDefinition.CommandType.GetInterfaces())
                 {
@@ -262,6 +272,20 @@ namespace FunctionMonkey.Compiler.Core
                     {
                         assemblies.Add(functionDefinition.CommandResultType.Assembly);
                     }
+                }
+
+                if (functionDefinition.OutputBinding != null)
+                {
+                    switch (functionDefinition.OutputBinding)
+                    {
+                        case StorageTableOutputBinding:
+                            assemblies.Add(typeof(TableAttribute).Assembly);
+                            break;
+                        case CosmosOutputBinding:
+                            assemblies.Add(typeof(CosmosDBAttribute).Assembly);
+                            break;
+                    }
+
                 }
             }
 

@@ -1,5 +1,4 @@
-﻿using System.IO;
-using FunctionMonkey.Compiler.Core.Extensions;
+﻿using FunctionMonkey.Compiler.Core.Extensions;
 using FunctionMonkey.Model;
 using HandlebarsDotNet;
 
@@ -9,12 +8,12 @@ namespace FunctionMonkey.Compiler.Core.HandlebarsHelpers.AzureFunctions
     {
         public static void Register()
         {
-            Handlebars.RegisterHelper("routeParameters", (writer, context, parameters) => HelperFunction(writer, context));
+            Handlebars.RegisterHelper("routeParameters", (writer, context, _) => HelperFunction(writer, context));
         }
 
-        private static void HelperFunction(TextWriter writer, dynamic context)
+        private static void HelperFunction(EncodedTextWriter writer, Context context)
         {
-            if (context is HttpFunctionDefinition httpFunctionDefinition)
+            if (context.Value is HttpFunctionDefinition httpFunctionDefinition)
             {
                 bool first = true;
                 foreach (HttpParameter parameter in httpFunctionDefinition.RouteParameters)

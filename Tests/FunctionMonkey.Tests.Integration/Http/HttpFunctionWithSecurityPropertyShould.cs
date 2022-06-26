@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Net;
-using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
-using Flurl;
+﻿using Flurl;
 using Flurl.Http;
 using FunctionMonkey.Tests.Integration.Http.Helpers;
-using Newtonsoft.Json;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace FunctionMonkey.Tests.Integration.Http
@@ -23,7 +17,7 @@ namespace FunctionMonkey.Tests.Integration.Http
             Assert.Equal(0, response.Value); // the posted value will be ignored and so the response will be the default
             Assert.Equal(Message, response.Message);
         }
-        
+
         [Fact]
         public async Task ReturnEchoedPayloadWithZeroValueForPOST()
         {
@@ -38,7 +32,7 @@ namespace FunctionMonkey.Tests.Integration.Http
 
             ValidateEchoedResponse(response);
         }
-        
+
         [Fact]
         public async Task ReturnEchoedPayloadWithZeroValueForGET()
         {
@@ -140,7 +134,7 @@ namespace FunctionMonkey.Tests.Integration.Http
         [Fact]
         public async Task ReturnBadRequestOnTypeMismtachForPOST()
         {
-            HttpResponseMessage response = await Settings.Host
+            var response = await Settings.Host
                 .AllowAnyHttpStatus()
                 .AppendPathSegment("verbs")
                 .PostJsonAsync(new
@@ -149,7 +143,7 @@ namespace FunctionMonkey.Tests.Integration.Http
                     Message
                 });
 
-            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+            Assert.Equal((int)HttpStatusCode.BadRequest, response.StatusCode);
             // ASP.Net Core returns a different error string for this
             //string responseString = await response.Content.ReadAsStringAsync();
             //Assert.Equal("Invalid type in message body at line 1 for path Value", responseString);

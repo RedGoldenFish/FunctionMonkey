@@ -1,11 +1,10 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using Azure.Data.Tables;
+using Azure.Storage.Blobs;
+using Azure.Storage.Queues;
 using AzureFromTheTrenches.Commanding.Abstractions;
 using FunctionMonkey.Tests.Integration.Common.Commands.TestInfrastructure;
-using Microsoft.WindowsAzure.Storage;
-using Microsoft.WindowsAzure.Storage.Blob;
-using Microsoft.WindowsAzure.Storage.Queue;
-using Microsoft.WindowsAzure.Storage.Table;
+using System;
+using System.Threading.Tasks;
 
 namespace FunctionMonkey.Tests.Integration.Common.Handlers.TestInfrastructure
 {
@@ -14,27 +13,23 @@ namespace FunctionMonkey.Tests.Integration.Common.Handlers.TestInfrastructure
         public async Task ExecuteAsync(SetupTestResourcesCommand command)
         {
             // Storage
-            CloudStorageAccount storageAccount = CloudStorageAccount.Parse(Environment.GetEnvironmentVariable("storageConnectionString"));
-
-            CloudTableClient tableClient = storageAccount.CreateCloudTableClient();
-            CloudTable markerTable = tableClient.GetTableReference(Constants.Storage.Table.Markers);
+            TableClient markerTable = new TableClient(Environment.GetEnvironmentVariable("storageConnectionString"), Constants.Storage.Table.Markers);
             await markerTable.CreateIfNotExistsAsync();
 
-            CloudQueueClient queueClient = storageAccount.CreateCloudQueueClient();
-            CloudQueue testQueue = queueClient.GetQueueReference(Constants.Storage.Queue.TestQueue);
+
+            QueueClient testQueue = new QueueClient(Environment.GetEnvironmentVariable("storageConnectionString"), Constants.Storage.Queue.TestQueue);
             await testQueue.CreateIfNotExistsAsync();
-            CloudQueue markerQueue = queueClient.GetQueueReference(Constants.Storage.Queue.MarkerQueue);
+            QueueClient markerQueue = new QueueClient(Environment.GetEnvironmentVariable("storageConnectionString"), Constants.Storage.Queue.MarkerQueue);
             await markerQueue.CreateIfNotExistsAsync();
 
-            CloudBlobClient blobClient = storageAccount.CreateCloudBlobClient();
-            CloudBlobContainer blobCommandsContainer = blobClient.GetContainerReference(Constants.Storage.Blob.BlobCommandContainer);
+            BlobContainerClient blobCommandsContainer = new BlobContainerClient(Environment.GetEnvironmentVariable("storageConnectionString"), Constants.Storage.Blob.BlobCommandContainer);
             await blobCommandsContainer.CreateIfNotExistsAsync();
-            CloudBlobContainer streamBlobCommandsContainer = blobClient.GetContainerReference(Constants.Storage.Blob.StreamBlobCommandContainer);
+            BlobContainerClient streamBlobCommandsContainer = new BlobContainerClient(Environment.GetEnvironmentVariable("storageConnectionString"), Constants.Storage.Blob.StreamBlobCommandContainer);
             await streamBlobCommandsContainer.CreateIfNotExistsAsync();
-            CloudBlobContainer outputBlobContainer = blobClient.GetContainerReference(Constants.Storage.Blob.OutputBlobContainer);
+            BlobContainerClient outputBlobContainer = new BlobContainerClient(Environment.GetEnvironmentVariable("storageConnectionString"), Constants.Storage.Blob.OutputBlobContainer);
             await outputBlobContainer.CreateIfNotExistsAsync();
-            CloudBlobContainer outputBindingContainer =
-                blobClient.GetContainerReference(Constants.Storage.Blob.BlobOutputCommandContainer);
+            BlobContainerClient outputBindingContainer =
+                new BlobContainerClient(Environment.GetEnvironmentVariable("storageConnectionString"), Constants.Storage.Blob.BlobOutputCommandContainer);
             await outputBindingContainer.CreateIfNotExistsAsync();
 
             // Cosmos and Service Bus

@@ -1,9 +1,9 @@
-﻿using System;
+﻿using FunctionMonkey.Abstractions;
+using FunctionMonkey.Abstractions.Contexts;
+using System;
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading;
-using FunctionMonkey.Abstractions;
-using FunctionMonkey.Abstractions.Contexts;
 using ExecutionContext = FunctionMonkey.Abstractions.Contexts.ExecutionContext;
 
 namespace FunctionMonkey.Infrastructure
@@ -25,7 +25,7 @@ namespace FunctionMonkey.Infrastructure
 
         internal static readonly AsyncLocal<HttpContext> HttpContextLocal = new AsyncLocal<HttpContext>();
 
-        void IContextSetter.SetServiceBusContext(int deliveryCount, DateTime enqueuedTimeUtc, string messageId, string lockToken)
+        void IContextSetter.SetServiceBusContext(int deliveryCount, DateTimeOffset enqueuedTimeUtc, string messageId, string lockToken)
         {
             ServiceBusContextLocal.Value = new ServiceBusContext
             {
@@ -36,8 +36,8 @@ namespace FunctionMonkey.Infrastructure
             };
         }
 
-        void IContextSetter.SetStorageQueueContext(DateTimeOffset expirationTime, DateTimeOffset insertionTime, DateTimeOffset nextVisibleTime,
-            string queueTrigger, string id, string popReceipt, int dequeueCount)
+        void IContextSetter.SetStorageQueueContext(DateTimeOffset? expirationTime, DateTimeOffset? insertionTime, DateTimeOffset? nextVisibleTime,
+            string queueTrigger, string id, string popReceipt, long dequeueCount)
         {
             StorageQueueContextLocal.Value = new StorageQueueContext
             {
