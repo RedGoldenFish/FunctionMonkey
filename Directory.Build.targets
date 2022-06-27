@@ -4,6 +4,7 @@
       <NuspecProperties>$(NuspecProperties);config=$(Configuration)</NuspecProperties>
       <NuspecProperties>$(NuspecProperties);version=$(NuGetPackageVersion)</NuspecProperties>
       <NuspecProperties>$(NuspecProperties);commit=$(GitCommitId)</NuspecProperties>
+      <NuspecProperties>$(NuspecProperties);suffix=$(PackageSuffix)</NuspecProperties>
     </PropertyGroup>
 
   </Target>

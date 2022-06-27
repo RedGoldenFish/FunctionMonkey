@@ -1,7 +1,8 @@
 <Project>
  <PropertyGroup>
    <CommonPackageVersion>4.1.1</CommonPackageVersion>
-   <PackageId>$(MSBuildProjectName).Cgo</PackageId>
+   <PackageSuffix>.Cgo</PackageSuffix>
+   <PackageId>$(MSBuildProjectName)$(PackageSuffix)</PackageId>
  </PropertyGroup>
 
  <ItemGroup>
