@@ -1,1 +1,1 @@
-dotnet pack .\FunctionMonkey.SignalR.csproj --output ../../ --configuration Release
+dotnet pack .\FunctionMonkey.SignalR.csproj --output ../../GeneratedNuGetPackages/Release/ --configuration Release

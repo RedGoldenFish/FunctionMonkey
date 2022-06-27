@@ -14,17 +14,4 @@
     </ItemGroup>
     <Delete Files="@(Nupkgs2Delete)" />
   </Target>
-
-
-
-
-
-  <Target Name="CopyNupkgToFolder" AfterTargets="Pack">
-    <ItemGroup>
-      <GeneratedNupkgs Include="$(PackageOutputAbsolutePath)\*.nupkg"/>
-      <GeneratedNupkgs Include="$(PackageOutputAbsolutePath)\*.snupkg"/>
-    </ItemGroup>
-    <Copy SourceFiles="@(GeneratedNupkgs)" DestinationFolder="$(MsBuildThisFileDirectory)GeneratedNuGetPackages\$(Configuration)" />
-
-  </Target>
 </Project>

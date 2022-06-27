@@ -1,1 +1,1 @@
-dotnet pack .\FunctionMonkey.Commanding.Cosmos.Abstractions.csproj --output ../../ --configuration Release
+dotnet pack .\FunctionMonkey.Commanding.Cosmos.Abstractions.csproj --output ../../GeneratedNuGetPackages/Release/ --configuration Release
