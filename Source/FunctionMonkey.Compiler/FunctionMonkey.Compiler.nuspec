@@ -2,11 +2,11 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
   <metadata>
     <id>FunctionMonkey.Compiler</id>
-    <version>4.0.56-beta.4</version>
+    <version>$version$</version>
     <authors>James Randall</authors>
     <description>Generates Azure Functions from command registrations</description>
     <licenseUrl>https://raw.githubusercontent.com/JamesRandall/FunctionMonkey/master/LICENSE</licenseUrl>
-    <projectUrl>https://github.com/JamesRandall/FunctionMonkey.git</projectUrl>
+    <projectUrl>https://github.com/cgoconseils/FunctionMonkey.git</projectUrl>
     <requireLicenseAcceptance>true</requireLicenseAcceptance>
   </metadata>
   <files>

@@ -174,9 +174,9 @@ namespace FunctionMonkey.Compiler.Core.Implementation.OpenApi
 
                 if (swaggerFile.EndsWith(".index.html"))
                 {
-                    content = content.Replace("http://petstore.swagger.io/v2/swagger.json", "./openapi/openapi.yaml");
-                    content = content.Replace("https://petstore.swagger.io/v2/swagger.json", "./openapi/openapi.yaml");
-                    content = content.Replace("=\"./swagger", $"=\"./openapi/swagger");
+                    content = content.Replace("http://petstore.swagger.io/v2/swagger.json", "../openapi/openapi.yaml");
+                    content = content.Replace("https://petstore.swagger.io/v2/swagger.json", "../openapi/openapi.yaml");
+                    content = content.Replace("=\"./swagger", $"=\"../openapi/swagger");
                 }
 
                 result[index] = new OpenApiFileReference

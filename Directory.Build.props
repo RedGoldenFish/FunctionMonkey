@@ -1,5 +1,19 @@
 <Project>
  <PropertyGroup>
-   <CommonPackageVersion>4.0.56-beta.4</CommonPackageVersion>
+   <CommonPackageVersion>4.1.1</CommonPackageVersion>
+   <PackageId>$(MSBuildProjectName).Cgo</PackageId>
  </PropertyGroup>
+
+ <ItemGroup>
+    <PackageReference Include="Nerdbank.GitVersioning" Condition="!Exists('packages.config')">
+      <Version>3.5.107</Version>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.2">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" />
+ </ItemGroup>
 </Project>

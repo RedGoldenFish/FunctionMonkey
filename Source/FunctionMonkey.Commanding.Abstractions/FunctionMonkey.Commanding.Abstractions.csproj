@@ -7,7 +7,7 @@
     <Authors>James Randall</Authors>
     <PackageLicenseUrl>https://raw.githubusercontent.com/JamesRandall/AzureFromTheTrenches.Commanding/master/LICENSE</PackageLicenseUrl>
     <PackageProjectUrl>https://functionmonkey.azurefromthetrenches.com/</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/JamesRandall/FunctionMonkey.git</RepositoryUrl>
+    <RepositoryUrl>https://github.com/cgoconseils/FunctionMonkey.git</RepositoryUrl>
     <AssemblyVersion>2.2.0.0</AssemblyVersion>
     <FileVersion>2.2.0.0</FileVersion>
     <PackageVersion>$(CommonPackageVersion)</PackageVersion>

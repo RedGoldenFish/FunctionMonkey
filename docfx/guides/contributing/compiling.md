@@ -6,7 +6,7 @@ You will need the yarn package manager to build Function Monkey (it includes the
 
 Next clone the source code from GitHub:
 
-    git clone https://github.com/JamesRandall/FunctionMonkey.git
+    git clone https://github.com/cgoconseils/FunctionMonkey.git
 
 Next in Visual Studio (or Code) open the solution file _FunctionMonkey.sln_.
 
