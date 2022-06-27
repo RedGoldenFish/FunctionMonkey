@@ -16,7 +16,7 @@ steps:
 
 - task: CopyFiles@2
   inputs:
-    SourceFolder: 'GeneratedNuGetPackages/$(buildConfiguration)/'
+    SourceFolder: 'GeneratedNuGetPackages/Release/'
     Contents: '**'
     TargetFolder: '$(build.artifactstagingdirectory)'
 
