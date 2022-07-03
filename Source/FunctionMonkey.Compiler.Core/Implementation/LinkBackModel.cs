@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using FunctionMonkey.Model;
+﻿using FunctionMonkey.Model;
+using System.Collections.Generic;
 
 namespace FunctionMonkey.Compiler.Core.Implementation
 {
@@ -8,11 +8,11 @@ namespace FunctionMonkey.Compiler.Core.Implementation
         public string Namespace { get; set; }
 
         public string TypeName { get; set; }
-        
+
         public IReadOnlyCollection<ImmutableTypeConstructorParameter> ConstructorParameters { get; set; }
-        
+
         public string PropertyName { get; set; }
-        
+
         public string PropertyTypeName { get; set; }
 
         public bool IsPropertyReference => !string.IsNullOrWhiteSpace(PropertyName);

@@ -1,5 +1,5 @@
-using System.Collections.Generic;
 using FunctionMonkey.Abstractions;
+using System.Collections.Generic;
 
 namespace FunctionMonkey.Compiler.Core.Implementation
 {

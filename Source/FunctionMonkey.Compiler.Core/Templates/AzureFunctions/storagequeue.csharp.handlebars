@@ -38,7 +38,7 @@ namespace {{Namespace}}
 
             var contextSetter = (FunctionMonkey.Abstractions.IContextSetter)
                 FunctionMonkey.Runtime.ServiceProvider.GetService(typeof(FunctionMonkey.Abstractions.IContextSetter));
-            contextSetter.SetStorageQueueContext(queueItem.ExpiresOn, queueItem.InsertedOn, queueItem.NextVisibleOn, queueItem.MessageId, queueItem.PopReceipt, queueItem.DequeueCount);
+            contextSetter.SetStorageQueueContext(queueItem.ExpiresOn, queueItem.InsertedOn, queueItem.NextVisibleOn, string.Empty, queueItem.MessageId, queueItem.PopReceipt, queueItem.DequeueCount);
             contextSetter.SetExecutionContext(executionContext.FunctionDirectory,
                 executionContext.FunctionAppDirectory,
                 executionContext.FunctionName,

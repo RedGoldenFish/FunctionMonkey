@@ -3,6 +3,7 @@
    <CommonPackageVersion>4.1.1</CommonPackageVersion>
    <PackageSuffix>.Cgo</PackageSuffix>
    <PackageId>$(MSBuildProjectName)$(PackageSuffix)</PackageId>
+   <LangVersion>latest</LangVersion>
  </PropertyGroup>
 
  <ItemGroup>

@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using FunctionMonkey.Abstractions;
+﻿using FunctionMonkey.Abstractions;
 using FunctionMonkey.Compiler.Core.Implementation.OpenApi;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace FunctionMonkey.Compiler.Core.Implementation.AzureFunctions
 {
@@ -11,7 +11,7 @@ namespace FunctionMonkey.Compiler.Core.Implementation.AzureFunctions
         private readonly JsonCompiler _jsonCompiler;
         private readonly OpenApiCompiler _openApiCompiler;
         private readonly IAssemblyCompiler _assemblyCompiler;
-        
+
         public AzureFunctionsCompiler(ICompilerLog compilerLog)
         {
             _compilerLog = compilerLog;
@@ -27,7 +27,7 @@ namespace FunctionMonkey.Compiler.Core.Implementation.AzureFunctions
             string outputBinaryFolder)
         {
             HandlebarsHelpers.AzureFunctions.HandlebarsHelperRegistration.RegisterHelpers();
-            
+
             bool isFSharpProject = functionCompilerMetadata.FunctionDefinitions.Any(x => x.IsFunctionalFunction);
             if (isFSharpProject)
             {

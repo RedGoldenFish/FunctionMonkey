@@ -3,9 +3,9 @@
   <UsingTask TaskName="FunctionMonkey.Compiler.MSBuild.ConvertErrors" AssemblyFile="/Users/jamesrandall/Code/myOpenSource/functionMonkeyV4/Source/FunctionMonkey.Compiler.MSBuild/bin/Debug/netstandard2.0/FunctionMonkey.Compiler.MSBuild.dll" />
 
   <PropertyGroup>
-    <FunctionCompilerExe>dotnet "/Users/jamesrandall/Code/myOpenSource/functionMonkeyV4/Source/FunctionMonkey.Compiler/bin/Debug/net6.0/FunctionMonkey.Compiler.dll"</FunctionCompilerExe>
-    <FunctionCompilerParams>"\Users\jamesrandall\Code\myOpenSource\functionMonkeyV4\Samples\Scratch\SwaggerBuildOut\bin\Debug\net6.0\bin\SwaggerBuildOut.dll" --netcore21 --jsonoutput</FunctionCompilerParams>
-    <FunctionPublishParams>/Users/jamesrandall/Code/myOpenSource/functionMonkeyV4/Samples/Scratch/SwaggerBuildOut/bin/Debug/net6.0/bin/SwaggerBuildOut.dll</FunctionPublishParams>
+    <FunctionCompilerExe>dotnet "/Users/jamesrandall/Code/myOpenSource/functionMonkeyV4/Source/FunctionMonkey.Compiler/bin/Debug/netcoreapp3.1/FunctionMonkey.Compiler.dll"</FunctionCompilerExe>
+    <FunctionCompilerParams>"\Users\jamesrandall\Code\myOpenSource\functionMonkeyV4\Samples\Scratch\SwaggerBuildOut\bin\Debug\netcoreapp3.1\bin\SwaggerBuildOut.dll" --netcore21 --jsonoutput</FunctionCompilerParams>
+    <FunctionPublishParams>/Users/jamesrandall/Code/myOpenSource/functionMonkeyV4/Samples/Scratch/SwaggerBuildOut/bin/Debug/netcoreapp3.1/bin/SwaggerBuildOut.dll</FunctionPublishParams>
     <FunctionPublishPostfix>--netcore21 --jsonoutput</FunctionPublishPostfix>
   </PropertyGroup>
 
@@ -15,7 +15,7 @@
   </Target>
   
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <AzureFunctionsVersion>v2</AzureFunctionsVersion>
   </PropertyGroup>
   <ItemGroup>

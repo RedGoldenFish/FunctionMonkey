@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Reflection;
-using FunctionMonkey.Abstractions.Builders.Model;
+﻿using FunctionMonkey.Abstractions.Builders.Model;
 using FunctionMonkey.Compiler.Core.Implementation.OpenApi;
 using FunctionMonkey.Model;
+using System;
+using System.Collections.Generic;
+using System.Reflection;
 
 namespace FunctionMonkey.Compiler.Core.Implementation
 {
@@ -18,7 +18,7 @@ namespace FunctionMonkey.Compiler.Core.Implementation
             string assemblyName,
             CompilerOptions compilerOptions,
             string outputAuthoredSourceFolder = null);
-        
+
         OpenApiOutputModel OpenApiOutputModel { get; set; }
     }
 }

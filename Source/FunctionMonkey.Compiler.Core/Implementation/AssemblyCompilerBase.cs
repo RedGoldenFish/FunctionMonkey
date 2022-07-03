@@ -185,7 +185,7 @@ namespace FunctionMonkey.Compiler.Core.Implementation
             string linkBackTemplateSource = TemplateProvider.GetCSharpLinkBackTemplate();
             var linkBackTemplate = Handlebars.Compile(linkBackTemplateSource);
 
-            LinkBackModel linkBackModel = null;
+            LinkBackModel linkBackModel;
             if (backlinkPropertyInfo != null)
             {
                 linkBackModel = new LinkBackModel
@@ -233,9 +233,9 @@ namespace FunctionMonkey.Compiler.Core.Implementation
             locations.Add(currentAssemblies.Single(x => x.GetName().Name == "netstandard").Location);
             locations.Add(currentAssemblies.Single(x => x.GetName().Name == "System.Runtime").Location); // System.Runtime
             locations.Add(typeof(TargetFrameworkAttribute).Assembly.Location); // NetCoreLib
-            locations.Add(typeof(System.Linq.Enumerable).Assembly.Location); // System.Linq
+            locations.Add(typeof(Enumerable).Assembly.Location); // System.Linq
             locations.Add(typeof(System.Security.Claims.ClaimsPrincipal).Assembly.Location);
-            locations.Add(typeof(System.Uri).Assembly.Location);
+            locations.Add(typeof(Uri).Assembly.Location);
             locations.Add(currentAssemblies.Single(x => x.GetName().Name == "System.Collections").Location);
             locations.Add(currentAssemblies.Single(x => x.GetName().Name == "System.Threading").Location);
             locations.Add(currentAssemblies.Single(x => x.GetName().Name == "System.Threading.Tasks").Location);
@@ -262,10 +262,10 @@ namespace FunctionMonkey.Compiler.Core.Implementation
             // If it is then its referenced already by the function host and so we add a reference to that version.
             List<string> resolvedLocations = ResolveLocationsWithExistingReferences(outputBinaryFolder, locations);
 
-            string[] manifestResoureNames = GetType().Assembly.GetManifestResourceNames()
-                .Where(x => x.StartsWith(manifestResourcePrefix))
-                .Select(x => x.Substring(manifestResourcePrefix.Length))
-                .ToArray();
+            //string[] manifestResoureNames = GetType().Assembly.GetManifestResourceNames()
+            //    .Where(x => x.StartsWith(manifestResourcePrefix))
+            //    .Select(x => x.Substring(manifestResourcePrefix.Length))
+            //    .ToArray();
 
             List<PortableExecutableReference> references = BuildReferenceSet(resolvedLocations);
 

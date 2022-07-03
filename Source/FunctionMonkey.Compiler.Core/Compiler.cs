@@ -14,6 +14,7 @@ using FunctionMonkey.Model;
 using FunctionMonkey.Model.OutputBindings;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -250,6 +251,7 @@ namespace FunctionMonkey.Compiler.Core
 
             assemblies.Add(typeof(BinaryData).Assembly);
             assemblies.Add(typeof(JsonSerializerOptions).Assembly);
+            assemblies.Add(typeof(LogLevel).Assembly);
 
             foreach (AbstractFunctionDefinition functionDefinition in functionDefinitions)
             {
