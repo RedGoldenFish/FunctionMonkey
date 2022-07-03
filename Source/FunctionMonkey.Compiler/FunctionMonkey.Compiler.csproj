@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp3.1</TargetFramework>    
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <Version>2.4.0-beta000</Version>
     <AssemblyName>FunctionMonkey.Compiler</AssemblyName>
     <PackageId>FunctionMonkey.Compiler</PackageId>
@@ -211,7 +211,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="FunctionMonkey.Compiler.targets">
+    <None Update="FunctionMonkey.Compiler.Cgo.targets">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="_._">
@@ -222,7 +222,7 @@
   <!-- Pack settings -->
   <PropertyGroup>
     <NoPackageAnalysis>true</NoPackageAnalysis>
-    <NuspecFile>FunctionMonkey.Compiler.nuspec</NuspecFile>
+    <NuspecFile>FunctionMonkey.Compiler.Cgo.nuspec</NuspecFile>
     <IntermediatePackDir>$(MSBuildProjectDirectory)/bin/$(Configuration)/publish/</IntermediatePackDir>
     <PublishDir>$(IntermediatePackDir)$(TargetFramework)/</PublishDir>
     <NuspecProperties>publishDir=$([MSBuild]::NormalizeDirectory($(IntermediatePackDir)))</NuspecProperties>
