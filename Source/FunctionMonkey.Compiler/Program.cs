@@ -39,6 +39,8 @@ namespace FunctionMonkey.Compiler
                     Assembly assembly = AssemblyLoadContext.Default.LoadFromAssemblyPath(inputAssemblyFile);
                     outputBinaryDirectory = Path.GetDirectoryName(assembly.Location);
 
+                    var exeBinaryDirectory = Path.GetDirectoryName(typeof(Program).Assembly.Location);
+
                     // Not sure why the AssemblyLoadContext doesn't deal with the below. I thought it did. Clearly not.
                     // TODO: Have a chat with someone who knows a bit more about this.
                     AssemblyLoadContext.Default.Resolving += (context, name) =>
@@ -46,6 +48,12 @@ namespace FunctionMonkey.Compiler
                         string path = Path.Combine(outputBinaryDirectory, $"{name.Name}.dll");
                         //string path = $"{outputBinaryDirectory}\\{name.Name}.dll";
                         if (File.Exists(path))
+                        {
+                            Assembly referencedAssembly = context.LoadFromAssemblyPath(path);
+                            return referencedAssembly;
+                        }
+
+                        if (File.Exists(Path.Combine(exeBinaryDirectory, $"{name.Name}.dll")))
                         {
                             Assembly referencedAssembly = context.LoadFromAssemblyPath(path);
                             return referencedAssembly;
