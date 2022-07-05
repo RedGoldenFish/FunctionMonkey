@@ -91,10 +91,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FunctionMonkey.MediatR", "S
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MediatRSample", "Samples\DocumentationSamples\MediatRSample\MediatRSample.csproj", "{C693B34C-DA5E-4C49-8016-5E94F4FA43B1}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Acq.AzureArchipad", "..\..\Cogedim\Acquereurs\CRM Acquereurs\AzureFunctions\Acq.AzureArchipad\Acq.AzureArchipad.csproj", "{5B7B1D8C-A8BA-4935-84F6-EB7EC3297469}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Acq.Core", "..\..\Cogedim\Acquereurs\CRM Acquereurs\Acq.Core\Acq.Core.csproj", "{A56BAAB5-6104-41E5-A7B5-CCC14E72B8FF}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -234,14 +230,6 @@ Global
 		{C693B34C-DA5E-4C49-8016-5E94F4FA43B1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{C693B34C-DA5E-4C49-8016-5E94F4FA43B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C693B34C-DA5E-4C49-8016-5E94F4FA43B1}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5B7B1D8C-A8BA-4935-84F6-EB7EC3297469}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5B7B1D8C-A8BA-4935-84F6-EB7EC3297469}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5B7B1D8C-A8BA-4935-84F6-EB7EC3297469}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5B7B1D8C-A8BA-4935-84F6-EB7EC3297469}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A56BAAB5-6104-41E5-A7B5-CCC14E72B8FF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A56BAAB5-6104-41E5-A7B5-CCC14E72B8FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A56BAAB5-6104-41E5-A7B5-CCC14E72B8FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A56BAAB5-6104-41E5-A7B5-CCC14E72B8FF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -270,13 +258,8 @@ Global
 		{BD36C0F8-2A2F-4A95-A8BA-D7D5F2C9808A} = {68C555D0-6537-4D5B-B36C-E62F34F5E890}
 		{B61847C6-76D3-43D9-B640-F62DD20905DB} = {68C555D0-6537-4D5B-B36C-E62F34F5E890}
 		{C693B34C-DA5E-4C49-8016-5E94F4FA43B1} = {CB492EF3-6255-4528-8978-0D0974B7F081}
-		{5B7B1D8C-A8BA-4935-84F6-EB7EC3297469} = {68C555D0-6537-4D5B-B36C-E62F34F5E890}
-		{A56BAAB5-6104-41E5-A7B5-CCC14E72B8FF} = {68C555D0-6537-4D5B-B36C-E62F34F5E890}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C9ABA812-671D-4486-B9D8-4F16D4BE11BD}
-	EndGlobalSection
-	GlobalSection(SharedMSBuildProjectFiles) = preSolution
-		..\..\Cogedim\Acquereurs\CRM Acquereurs\AzureFunctions\Services\Services.projitems*{5b7b1d8c-a8ba-4935-84f6-eb7ec3297469}*SharedItemsImports = 5
 	EndGlobalSection
 EndGlobal
