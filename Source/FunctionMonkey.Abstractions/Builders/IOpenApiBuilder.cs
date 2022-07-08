@@ -75,5 +75,12 @@ namespace FunctionMonkey.Abstractions.Builders
         /// A lambda that returns a unique identifier for the provided system type
         /// </param>
         IOpenApiBuilder CustomSchemaIds(Func<Type, string> schemaIdSelector);
+
+        /// <summary>
+        /// Specify the output path for the openapi.yaml file.
+        /// </summary>
+        /// <param name="outputPath">The output path.</param>
+        /// <returns></returns>
+        IOpenApiBuilder OutputPath(string outputPath);
     }
 }
