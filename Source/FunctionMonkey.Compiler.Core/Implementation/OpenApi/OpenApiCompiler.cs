@@ -1,13 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.IO;
-using System.Linq;
-using System.Net.Http;
-using System.Reflection;
-using System.Runtime.Serialization;
-using System.Text;
-using FunctionMonkey.Abstractions.Builders;
+﻿using FunctionMonkey.Abstractions.Builders;
 using FunctionMonkey.Abstractions.Builders.Model;
 using FunctionMonkey.Abstractions.Http;
 using FunctionMonkey.Compiler.Core.Extensions;
@@ -19,6 +10,15 @@ using Microsoft.OpenApi.Extensions;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.IO;
+using System.Linq;
+using System.Net.Http;
+using System.Reflection;
+using System.Runtime.Serialization;
+using System.Text;
 
 namespace FunctionMonkey.Compiler.Core.Implementation.OpenApi
 {
@@ -40,7 +40,7 @@ namespace FunctionMonkey.Compiler.Core.Implementation.OpenApi
             {
                 return null;
             }
-            
+
             string apiPrefix = GetApiPrefix(outputBinaryFolder);
 
             if (!configuration.IsValid)
@@ -356,7 +356,7 @@ namespace FunctionMonkey.Compiler.Core.Implementation.OpenApi
 
                             operation.Parameters.Add(parameter);
                             // TODO: We need to consider what to do with the payload model here - if its a route parameter
-                            // we need to ignore it in the payload model                            
+                            // we need to ignore it in the payload model
                         }
 
                         if (method == HttpMethod.Post || method == HttpMethod.Put || method == HttpMethod.Patch)

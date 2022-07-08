@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Net.Http;
-using System.Reflection;
-using System.Text.RegularExpressions;
-using AzureFromTheTrenches.Commanding.Abstractions;
+﻿using AzureFromTheTrenches.Commanding.Abstractions;
 using FunctionMonkey.Abstractions;
 using FunctionMonkey.Abstractions.Builders;
 using FunctionMonkey.Abstractions.Builders.Model;
@@ -14,10 +7,16 @@ using FunctionMonkey.Builders;
 using FunctionMonkey.Commanding.Abstractions;
 using FunctionMonkey.Commanding.Abstractions.Validation;
 using FunctionMonkey.Commanding.Cosmos.Abstractions;
-using FunctionMonkey.Extensions;
 using FunctionMonkey.Model;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Net.Http;
+using System.Reflection;
+using System.Text.RegularExpressions;
 
 namespace FunctionMonkey.Infrastructure
 {
@@ -29,7 +28,7 @@ namespace FunctionMonkey.Infrastructure
         {
             _resultTypeExtractor = resultTypeExtractor;
         }
-        
+
         public static void EnsureFunctionsHaveUniqueNames(IReadOnlyCollection<AbstractFunctionDefinition> functionDefinitions)
         {
             var groups = functionDefinitions.GroupBy(x => x.Name)
@@ -53,7 +52,7 @@ namespace FunctionMonkey.Infrastructure
             {
                 return definition.ExplicitCommandResultType;
             }
-                
+
             if (definition.NoCommandHandler || definition.CommandType.GetInterfaces().Any(x => x == typeof(ICommandWithNoHandler)))
             {
                 return definition.CommandType;
@@ -61,12 +60,12 @@ namespace FunctionMonkey.Infrastructure
 
             return _resultTypeExtractor.CommandResultType(definition.CommandType);
         }
-        
+
         public void Patch(FunctionHostBuilder builder, string newAssemblyNamespace)
         {
-            AuthorizationBuilder authorizationBuilder = (AuthorizationBuilder) builder.AuthorizationBuilder;
+            AuthorizationBuilder authorizationBuilder = (AuthorizationBuilder)builder.AuthorizationBuilder;
             Type validationResultType = typeof(ValidationResult);
-            
+
             foreach (AbstractFunctionDefinition definition in builder.FunctionDefinitions)
             {
                 definition.Namespace = newAssemblyNamespace;
@@ -81,7 +80,7 @@ namespace FunctionMonkey.Infrastructure
                     definition.OutputBinding.OutputBindingConverterType =
                         definition.OutputBinding.OutputBindingConverterType ?? builder.DefaultOutputBindingConverter;
                 }
-                
+
                 if (CommandRequiresNoHandler(definition.CommandType) || builder.HasNoCommandHandlers)
                 {
                     definition.NoCommandHandler = true; // don't skip the if statement, this may also be set through options
@@ -148,7 +147,7 @@ namespace FunctionMonkey.Infrastructure
                 authorizationBuilder.DefaultClaimsPrincipalAuthorizationType;
 
             PatchHeaderBindings(builder, httpFunctionDefinition);
-            
+
             httpFunctionDefinition.HttpResponseHandlerType =
                 httpFunctionDefinition.HttpResponseHandlerType ?? builder.DefaultHttpResponseHandlerType;
 
@@ -159,7 +158,7 @@ namespace FunctionMonkey.Infrastructure
                                                              .CommandResultType);
 
             httpFunctionDefinition.IsStreamCommand =
-                (typeof(IStreamCommand)).IsAssignableFrom(httpFunctionDefinition.CommandType); 
+                (typeof(IStreamCommand)).IsAssignableFrom(httpFunctionDefinition.CommandType);
 
             httpFunctionDefinition.TokenValidatorType = httpFunctionDefinition.TokenValidatorType ?? authorizationBuilder.TokenValidatorType;
 
@@ -214,7 +213,7 @@ namespace FunctionMonkey.Infrastructure
             {
                 httpFunctionDefinition.HeaderBindingConfiguration.PropertyFromHeaderMappings = new Dictionary<string, string>();
             }
-            
+
         }
 
         private static void EnsureOpenApiDescription(HttpFunctionDefinition httpFunctionDefinition)
@@ -230,7 +229,7 @@ namespace FunctionMonkey.Infrastructure
             Debug.Assert(httpFunctionDefinition.RouteConfiguration != null);
             if (string.IsNullOrWhiteSpace(httpFunctionDefinition.RouteConfiguration.OpenApiName))
             {
-                string[] components = httpFunctionDefinition.RouteConfiguration.Route.Split('/');
+                string[] components = httpFunctionDefinition.RouteConfiguration.Route?.Split('/') ?? Array.Empty<string>();
                 for (int index = components.Length - 1; index >= 0; index--)
                 {
                     if (string.IsNullOrWhiteSpace(components[index]) || IsRouteParameter(components[index]))
@@ -297,7 +296,7 @@ namespace FunctionMonkey.Infrastructure
                 })
                 .ToArray();
         }
-        
+
         private static void ExtractPossibleFormParameters(HttpFunctionDefinition httpFunctionDefinition)
         {
             httpFunctionDefinition.PossibleFormProperties = httpFunctionDefinition
@@ -322,7 +321,7 @@ namespace FunctionMonkey.Infrastructure
                 httpFunctionDefinition1.RouteParameters = routeParameters;
                 return;
             }
-            
+
             PropertyInfo[] candidateCommandProperties = httpFunctionDefinition1.CommandType
                 .GetProperties(BindingFlags.Instance | BindingFlags.Public)
                 .Where(x => x.GetCustomAttribute<SecurityPropertyAttribute>() == null

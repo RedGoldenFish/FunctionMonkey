@@ -1,13 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Reflection;
-using System.Security.Claims;
-using System.Security.Cryptography.X509Certificates;
-using System.Threading;
-using System.Threading.Tasks;
-using AzureFromTheTrenches.Commanding;
+﻿using AzureFromTheTrenches.Commanding;
 using AzureFromTheTrenches.Commanding.Abstractions;
 using FunctionMonkey.Abstractions;
 using FunctionMonkey.Abstractions.Builders;
@@ -23,13 +14,20 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Serialization;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using System.Security.Claims;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace FunctionMonkey
 {
 
     public abstract class AbstractPluginFunctions
     {
-        
+
     }
 
     public class RuntimeInstance
@@ -38,10 +36,10 @@ namespace FunctionMonkey
 
         public AsyncLocal<IServiceProvider> FunctionServiceProvider { get; } = new AsyncLocal<IServiceProvider>(null);
 
-        public AsyncLocal<ILogger> FunctionProvidedLogger { get;  }= new AsyncLocal<ILogger>(null);
+        public AsyncLocal<ILogger> FunctionProvidedLogger { get; } = new AsyncLocal<ILogger>(null);
 
         public Dictionary<string, PluginFunctions> PluginFunctions { get; } = new Dictionary<string, PluginFunctions>();
-        
+
         //public IFunctionHostBuilder Builder { get; }
         public IReadOnlyCollection<AbstractFunctionDefinition> FunctionDefinitions { get; }
 
@@ -79,7 +77,7 @@ namespace FunctionMonkey
             {
                 configuration = ConfigurationLocator.FindConfiguration(functionAppConfigurationAssembly);
             }
-            
+
             CommandingDependencyResolverAdapter adapter = new CommandingDependencyResolverAdapter(
                 (fromType, toInstance) => ServiceCollection.AddSingleton(fromType, toInstance),
                 (fromType, toType) => ServiceCollection.AddTransient(fromType, toType),
@@ -100,7 +98,7 @@ namespace FunctionMonkey
 
             // Register internal implementations
             RegisterInternalImplementations();
-            
+
             FunctionHostBuilder builder = null;
             IFunctionCompilerMetadata functionCompilerMetadata = null;
             CompileTargetEnum compileTarget;
@@ -123,7 +121,7 @@ namespace FunctionMonkey
                 FunctionDefinitions = functionCompilerMetadata.FunctionDefinitions;
                 compileTarget = functionCompilerMetadata.CompilerOptions.HttpTarget;
             }
-            
+
             PostBuildPatcher.EnsureFunctionsHaveUniqueNames(FunctionDefinitions);
 
             RegisterCoreDependencies(builder?.MediatorType ?? typeof(DefaultMediatorDecorator), FunctionDefinitions, compileTarget);
@@ -136,7 +134,7 @@ namespace FunctionMonkey
 
             RegisterOutputBindingDependencies(FunctionDefinitions);
 
-            
+
             CreatePluginFunctions(functionCompilerMetadata?.ClaimsMappings, FunctionDefinitions);
 
             RegisterLoggerIfRequired();
@@ -203,7 +201,7 @@ namespace FunctionMonkey
             foreach (AbstractFunctionDefinition functionDefinition in functionDefinitions)
             {
                 PluginFunctions pluginFunctions = new PluginFunctions();
-                
+
                 pluginFunctions.Handler = functionDefinition.FunctionHandler;
 
                 if (functionDefinition.OutputBinding != null)
@@ -213,7 +211,7 @@ namespace FunctionMonkey
                         pluginFunctions.OutputBindingConverter = (originatingCommand, input) =>
                         {
                             IOutputBindingConverter converter =
-                                (IOutputBindingConverter) ServiceProvider.GetService(functionDefinition.OutputBinding
+                                (IOutputBindingConverter)ServiceProvider.GetService(functionDefinition.OutputBinding
                                     .OutputBindingConverterType);
                             return converter.Convert(originatingCommand, input);
                         };
@@ -221,7 +219,7 @@ namespace FunctionMonkey
                     else if (functionDefinition.OutputBinding.OutputBindingConverterFunction != null)
                     {
                         pluginFunctions.OutputBindingConverter = (originatingCommand, input) =>
-                            ((Func<object, object, object>) functionDefinition.OutputBinding.OutputBindingConverterFunction
+                            ((Func<object, object, object>)functionDefinition.OutputBinding.OutputBindingConverterFunction
                                 .Handler)(originatingCommand, input);
                     }
                 }
@@ -229,7 +227,7 @@ namespace FunctionMonkey
                 if (functionDefinition.DeserializeFunction != null)
                 {
                     pluginFunctions.Deserialize = (body, enforceSecurityProperties) =>
-                        ((Func<string, bool, object>) functionDefinition.SerializeFunction.Handler)(body, enforceSecurityProperties);
+                        ((Func<string, bool, object>)functionDefinition.SerializeFunction.Handler)(body, enforceSecurityProperties);
                 }
                 else
                 {
@@ -241,7 +239,7 @@ namespace FunctionMonkey
                 if (functionDefinition.SerializeFunction != null)
                 {
                     pluginFunctions.Serialize = (obj, enforceSecurityProperties) =>
-                        ((Func<object, bool, string>) functionDefinition.SerializeFunction.Handler)(obj,
+                        ((Func<object, bool, string>)functionDefinition.SerializeFunction.Handler)(obj,
                             enforceSecurityProperties);
                 }
                 else
@@ -253,7 +251,7 @@ namespace FunctionMonkey
                 if (functionDefinition.ValidatorFunction != null)
                 {
                     pluginFunctions.Validate = obj =>
-                        ((Func<object, object>) functionDefinition.ValidatorFunction.Handler)(obj);
+                        ((Func<object, object>)functionDefinition.ValidatorFunction.Handler)(obj);
                 }
                 else
                 {
@@ -266,20 +264,20 @@ namespace FunctionMonkey
                         return validationResult;
                     };
                 }
-                
+
                 if (functionDefinition.IsValidFunction != null)
                 {
-                    pluginFunctions.IsValid = (Func<object,bool>)functionDefinition.IsValidFunction.Handler;
+                    pluginFunctions.IsValid = (Func<object, bool>)functionDefinition.IsValidFunction.Handler;
                 }
                 else
                 {
                     pluginFunctions.IsValid = validationResult =>
                     {
-                        ValidationResult castValidationResult = (ValidationResult) validationResult;
+                        ValidationResult castValidationResult = (ValidationResult)validationResult;
                         return castValidationResult.IsValid;
                     };
                 }
-                
+
                 if (functionDefinition is HttpFunctionDefinition httpFunctionDefinition)
                 {
                     if (httpFunctionDefinition.TokenValidatorFunction != null)
@@ -287,13 +285,13 @@ namespace FunctionMonkey
                         if (httpFunctionDefinition.TokenValidatorFunction.IsAsync)
                         {
                             pluginFunctions.ValidateToken =
-                                (Func<string, Task<ClaimsPrincipal>>) httpFunctionDefinition.TokenValidatorFunction
+                                (Func<string, Task<ClaimsPrincipal>>)httpFunctionDefinition.TokenValidatorFunction
                                     .Handler;
                         }
                         else
                         {
                             pluginFunctions.ValidateToken = authorizationHeader => Task.FromResult(
-                                ((Func<string, ClaimsPrincipal>) httpFunctionDefinition.TokenValidatorFunction
+                                ((Func<string, ClaimsPrincipal>)httpFunctionDefinition.TokenValidatorFunction
                                     .Handler)(authorizationHeader)
                             );
                         }
@@ -317,10 +315,10 @@ namespace FunctionMonkey
                                     .TokenValidatorType);*/
                             ITokenValidator tokenValidator = ServiceProvider.GetService<ITokenValidator>();
                             ClaimsPrincipal principal = await tokenValidator.ValidateAsync(authorizationHeader);
-                            
+
                             return principal;
                         };
-                        
+
                         pluginFunctions.BindClaims = async (principal, command) =>
                         {
                             var claimsBinder = (FunctionMonkey.Abstractions.ICommandClaimsBinder)
@@ -358,24 +356,24 @@ namespace FunctionMonkey
                         if (httpFunctionDefinition.CreateResponseForResultFunction != null)
                         {
                             pluginFunctions.CreateResponseForResult =
-                                (Func<object, object, Task<IActionResult>>) httpFunctionDefinition
+                                (Func<object, object, Task<IActionResult>>)httpFunctionDefinition
                                     .CreateResponseForResultFunction.Handler;
                         }
                         else
                         {
                             pluginFunctions.CreateResponseForResult = (cmd, result) => null;
                         }
-                    
+
                         if (httpFunctionDefinition.CreateResponseFunction != null)
                         {
                             pluginFunctions.CreateResponse =
-                                (Func<object, Task<IActionResult>>) httpFunctionDefinition.CreateResponseFunction.Handler;
+                                (Func<object, Task<IActionResult>>)httpFunctionDefinition.CreateResponseFunction.Handler;
                         }
                         else
                         {
                             pluginFunctions.CreateResponse = cmd => null;
                         }
-                    
+
                         if (httpFunctionDefinition.CreateResponseFromExceptionFunction != null)
                         {
                             pluginFunctions.CreateResponseFromException =
@@ -391,29 +389,29 @@ namespace FunctionMonkey
                         pluginFunctions.CreateValidationFailureResponse = (command, validationResult) =>
                         {
                             var responseHandler =
-                                (IHttpResponseHandler) ServiceProvider.GetService(
+                                (IHttpResponseHandler)ServiceProvider.GetService(
                                     httpFunctionDefinition.HttpResponseHandlerType);
                             return responseHandler.CreateValidationFailureResponse(command, (ValidationResult)validationResult);
                         };
-                        
+
                         pluginFunctions.CreateResponseForResult = (command, result) =>
                         {
                             var responseHandler =
-                                (IHttpResponseHandler) ServiceProvider.GetService(
+                                (IHttpResponseHandler)ServiceProvider.GetService(
                                     httpFunctionDefinition.HttpResponseHandlerType);
                             return responseHandler.CreateResponse(command, result);
                         };
                         pluginFunctions.CreateResponse = command =>
                         {
                             var responseHandler =
-                                (IHttpResponseHandler) ServiceProvider.GetService(
+                                (IHttpResponseHandler)ServiceProvider.GetService(
                                     httpFunctionDefinition.HttpResponseHandlerType);
                             return responseHandler.CreateResponse(command);
                         };
                         pluginFunctions.CreateResponseFromException = (command, exception) =>
                         {
                             var responseHandler =
-                                (IHttpResponseHandler) ServiceProvider.GetService(
+                                (IHttpResponseHandler)ServiceProvider.GetService(
                                     httpFunctionDefinition.HttpResponseHandlerType);
                             return responseHandler.CreateResponseFromException(command, exception);
                         };
@@ -426,16 +424,16 @@ namespace FunctionMonkey
                         pluginFunctions.CreateResponseFromException = (cmd, ex) => null;
                     }
 
-                    
-                    
-                    
+
+
+
                 };
-                    
+
                 PluginFunctions.Add(functionDefinition.Name, pluginFunctions);
-                
+
             }
         }
-        
+
         private static bool HasResponseFunctions(HttpFunctionDefinition httpFunctionDefinition)
         {
             return httpFunctionDefinition.CreateValidationFailureResponseFunction != null ||
@@ -531,7 +529,7 @@ namespace FunctionMonkey
             {
                 ServiceCollection.AddTransient(typeof(ITokenValidator), tokenValidatorType);
             }
-            
+
             foreach (Type claimsPrincipalAuthorizationType in types)
             {
                 ServiceCollection.AddTransient(claimsPrincipalAuthorizationType);
@@ -565,7 +563,7 @@ namespace FunctionMonkey
 
             return configuration;
         }
-        
+
         private IFunctionCompilerMetadata LocateFunctionCompilerMetadata(Assembly functionAppConfigurationAssembly)
         {
             IFunctionCompilerMetadata metadata = ConfigurationLocator.FindCompilerMetadata(functionAppConfigurationAssembly);
@@ -581,7 +579,7 @@ namespace FunctionMonkey
             DefaultMediatorSettings.SetDefaultsIfRequired(builder);
             RegisterCommandHandlersForCommandsWithNoAssociatedHandler(builder, commandRegistry);
             IMediatorResultTypeExtractor extractor = (IMediatorResultTypeExtractor)Activator.CreateInstance(builder.Options.MediatorResultTypeExtractor);
-            
+
             new PostBuildPatcher(extractor).Patch(builder, "");
             return builder;
         }
@@ -591,10 +589,10 @@ namespace FunctionMonkey
             // TODO: We can improve this so that auto-registration is decoupled and can be provided by a mediator package
             if (builder.MediatorType != typeof(DefaultMediatorDecorator))
                 return;
-            
+
             // IN PROGRESS: This looks from the loaded set of assemblies and looks for a command handler for each command associated with a function.
             // If the handler is not already registered in the command registry then this registers it.
-            IRegistrationCatalogue registrationCatalogue = (IRegistrationCatalogue) commandRegistry;
+            IRegistrationCatalogue registrationCatalogue = (IRegistrationCatalogue)commandRegistry;
             HashSet<Type> registeredCommandTypes = new HashSet<Type>(registrationCatalogue.GetRegisteredCommands());
 
             Dictionary<Type, List<Type>> commandTypesToHandlerTypes = null;
