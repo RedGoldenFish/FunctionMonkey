@@ -11,8 +11,6 @@ cd ..\FunctionMonkey.Compiler
 .\package.ps1
 cd ..\FunctionMonkey.FluentValidation
 .\package.ps1
-cd ..\FunctionMonkey.TokenValidator
-.\package.ps1
 cd ..\FunctionMonkey.SignalR
 .\package.ps1
 cd ..\FunctionMonkey.Testing
