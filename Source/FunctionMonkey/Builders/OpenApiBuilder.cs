@@ -1,6 +1,5 @@
 ﻿using FunctionMonkey.Abstractions.Builders;
 using FunctionMonkey.Abstractions.Http;
-using FunctionMonkey.Model;
 using System;
 using System.Xml.XPath;
 
@@ -78,6 +77,12 @@ namespace FunctionMonkey.Builders
         public IOpenApiBuilder CustomSchemaIds(Func<Type, string> schemaIdSelector)
         {
             _openApiConfiguration.SchemaIdSelector = schemaIdSelector;
+            return this;
+        }
+
+        public IOpenApiBuilder OutputPath(string outputPath)
+        {
+            _openApiConfiguration.OutputPath = outputPath;
             return this;
         }
     }

@@ -103,6 +103,7 @@ namespace FunctionMonkey.Compiler.Core.Implementation.OpenApi
             if (!string.IsNullOrWhiteSpace(configuration.UserInterfaceRoute))
             {
                 result.SwaggerUserInterface = CopySwaggerUserInterfaceFilesToWebFolder();
+                result.UserInterfaceRoute = configuration.UserInterfaceRoute;
             }
 
             if (!string.IsNullOrWhiteSpace(configuration.OutputPath))
@@ -174,9 +175,8 @@ namespace FunctionMonkey.Compiler.Core.Implementation.OpenApi
 
                 if (swaggerFile.EndsWith(".index.html"))
                 {
-                    content = content.Replace("http://petstore.swagger.io/v2/swagger.json", "../openapi/openapi.yaml");
-                    content = content.Replace("https://petstore.swagger.io/v2/swagger.json", "../openapi/openapi.yaml");
-                    content = content.Replace("=\"./swagger", $"=\"../openapi/swagger");
+                    content = content.Replace("http://petstore.swagger.io/v2/swagger.json", "./openapi.yaml");
+                    content = content.Replace("https://petstore.swagger.io/v2/swagger.json", "./openapi.yaml");
                 }
 
                 result[index] = new OpenApiFileReference

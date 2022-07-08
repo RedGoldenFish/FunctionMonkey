@@ -117,7 +117,8 @@ namespace FunctionMonkey.Compiler.Core.Implementation
                 string templateSource = TemplateProvider.GetTemplate("swaggerui", "csharp");
                 return CreateSyntaxTreeFromHandlebarsTemplate(templateSource, "SwaggerUi", new
                 {
-                    Namespace = newAssemblyNamespace
+                    Namespace = newAssemblyNamespace,
+                    Route = OpenApiOutputModel.UserInterfaceRoute?.TrimStart('/')
                 }, directoryInfo);
             }
 

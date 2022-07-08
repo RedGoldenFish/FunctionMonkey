@@ -16,5 +16,7 @@ namespace FunctionMonkey.Compiler.Core.Implementation.OpenApi
         public IReadOnlyCollection<OpenApiFileReference> SwaggerUserInterface { get; set; }
 
         public bool IsConfiguredForUserInterface => SwaggerUserInterface != null && SwaggerUserInterface.Count > 0;
+
+        public string UserInterfaceRoute { get; set; }
     }
 }

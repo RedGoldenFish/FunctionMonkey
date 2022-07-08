@@ -21,13 +21,13 @@ namespace {{Namespace}}
         };
 
         [FunctionName("OpenApiProvider")]
-        public static IActionResult Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = "openapi/{name?}")]HttpRequest req, ILogger logger, string name)
+        public static IActionResult Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = "{{Route}}/{name?}")]HttpRequest req, ILogger logger, string name)
         {
             if (string.IsNullOrWhiteSpace(name))
             {
                 name = "index.html";
             }
-            
+
             using (Stream stream = typeof(OpenApiProvider).Assembly.GetManifestResourceStream($"{{Namespace}}.OpenApi.{name}"))
             {
                 if (stream != null)
