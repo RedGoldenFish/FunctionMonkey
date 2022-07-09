@@ -4,16 +4,16 @@
 // ------------------------------------------------------------
 // modified from https://github.com/Microsoft/OpenAPI.NET.CSharpAnnotations
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Runtime.Serialization;
 using AzureFromTheTrenches.Commanding.Abstractions;
 using FunctionMonkey.Compiler.Core.Extensions;
 using FunctionMonkey.Compiler.Core.Implementation.OpenApi;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Runtime.Serialization;
 
 namespace FunctionMonkey.Compiler.Core.Implementation.AzureFunctions
 {
@@ -35,7 +35,7 @@ namespace FunctionMonkey.Compiler.Core.Implementation.AzureFunctions
 
         public OpenApiSchema FindReference(Type input)
         {
-            // Return empty schema when the type does not have a name. 
+            // Return empty schema when the type does not have a name.
             // This can occur, for example, when a generic type without the generic argument specified
             // is passed in.
             if (input == null || input.FullName == null)
@@ -90,7 +90,7 @@ namespace FunctionMonkey.Compiler.Core.Implementation.AzureFunctions
         /// <returns>The existing or created reference object.</returns>
         public OpenApiSchema FindOrAddReference(Type input)
         {
-            // Return empty schema when the type does not have a name. 
+            // Return empty schema when the type does not have a name.
             // This can occur, for example, when a generic type without the generic argument specified
             // is passed in.
             if (input == null || input.FullName == null)
@@ -188,6 +188,9 @@ namespace FunctionMonkey.Compiler.Core.Implementation.AzureFunctions
                 _references[key] = schema;
 
                 schemaFilterContext.PropertyNames = new Dictionary<string, string>();
+
+                var memberSerialization = input.GetAttributeValue((JsonObjectAttribute attribute) => attribute.MemberSerialization);
+
                 foreach (var propertyInfo in input.GetProperties())
                 {
                     // Ignore Property ?
@@ -209,6 +212,10 @@ namespace FunctionMonkey.Compiler.Core.Implementation.AzureFunctions
                     }
                     if (string.IsNullOrWhiteSpace(propertyName))
                     {
+                        if (memberSerialization == MemberSerialization.OptIn)
+                        {
+                            continue;
+                        }
                         propertyName = propertyInfo.Name.ToCamelCase();
                     }
 
