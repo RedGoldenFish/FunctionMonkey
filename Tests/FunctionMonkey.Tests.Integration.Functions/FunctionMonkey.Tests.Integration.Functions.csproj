@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <AzureFunctionsVersion>V3</AzureFunctionsVersion>
     <AssemblyName>FunctionMonkey.Tests.Integration.Functions</AssemblyName>
     <RootNamespace>FunctionMonkey.Tests.Integration.Functions</RootNamespace>
