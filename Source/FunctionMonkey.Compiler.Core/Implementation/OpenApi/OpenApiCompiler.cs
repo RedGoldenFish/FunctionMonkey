@@ -311,6 +311,11 @@ namespace FunctionMonkey.Compiler.Core.Implementation.OpenApi
                                     propertyRequired = propertyInfo.GetAttributeValue((RequiredAttribute attribute) => attribute) != null;
                                 }
 
+                                if (!schema.Properties.ContainsKey(propertyName))
+                                {
+                                    continue;
+                                }
+
                                 var propertySchema = schema.Properties[propertyName];
 
                                 var parameter = new OpenApiParameter
