@@ -334,12 +334,13 @@ namespace FunctionMonkey.Compiler.Core.Implementation.OpenApi
                             }
                         }
 
-                        if (functionByRoute.Authorization == AuthorizationTypeEnum.Function && (method == HttpMethod.Get || method == HttpMethod.Delete))
+                        if (functionByRoute.Authorization == AuthorizationTypeEnum.Function)
                         {
+                            var isGetOrDelete = method == HttpMethod.Get || method == HttpMethod.Delete;
                             operation.Parameters.Add(new OpenApiParameter
                             {
-                                Name = "code",
-                                In = ParameterLocation.Query,
+                                Name = isGetOrDelete ? "code" : "x-functions-key",
+                                In = isGetOrDelete ? ParameterLocation.Query : ParameterLocation.Header,
                                 Required = true,
                                 Schema = typeof(string).MapToOpenApiSchema(),
                                 Description = ""
