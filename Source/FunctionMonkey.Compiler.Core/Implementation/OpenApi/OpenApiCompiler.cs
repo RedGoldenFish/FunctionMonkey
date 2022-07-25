@@ -282,9 +282,9 @@ namespace FunctionMonkey.Compiler.Core.Implementation.OpenApi
                             operation.Responses.Add("200", response);
                         }
 
+                        var commandSchema = registry.GetOrCreateSchema(commandType);
                         if (method == HttpMethod.Get || method == HttpMethod.Delete)
                         {
-                            var schema = registry.GetOrCreateSchema(commandType);
                             foreach (HttpParameter property in functionByRoute.QueryParameters)
                             {
                                 var propertyInfo = commandType.GetProperty(property.Name);
@@ -311,12 +311,12 @@ namespace FunctionMonkey.Compiler.Core.Implementation.OpenApi
                                     propertyRequired = propertyInfo.GetAttributeValue((RequiredAttribute attribute) => attribute) != null;
                                 }
 
-                                if (!schema.Properties.ContainsKey(propertyName))
+                                if (!commandSchema.Properties.ContainsKey(propertyName))
                                 {
                                     continue;
                                 }
 
-                                var propertySchema = schema.Properties[propertyName];
+                                var propertySchema = commandSchema.Properties[propertyName];
 
                                 var parameter = new OpenApiParameter
                                 {
@@ -349,13 +349,24 @@ namespace FunctionMonkey.Compiler.Core.Implementation.OpenApi
 
                         foreach (HttpParameter property in functionByRoute.RouteParameters)
                         {
+                            var propertyInfo = commandType.GetProperty(property.Name);
+
+                            var propertyName = propertyInfo.Name.ToCamelCase();
+
+                            if (!commandSchema.Properties.ContainsKey(propertyName))
+                            {
+                                continue;
+                            }
+
+                            var propertySchema = commandSchema.Properties[propertyName];
+
                             var parameter = new OpenApiParameter
                             {
                                 Name = property.RouteName.ToCamelCase(),
                                 In = ParameterLocation.Path,
                                 Required = !property.IsOptional,
-                                Schema = property.Type.MapToOpenApiSchema(),
-                                Description = ""
+                                Schema = propertySchema,
+                                Description = propertySchema.Description
                             };
 
                             FilterParameter(compilerConfiguration.ParameterFilters, parameter);
