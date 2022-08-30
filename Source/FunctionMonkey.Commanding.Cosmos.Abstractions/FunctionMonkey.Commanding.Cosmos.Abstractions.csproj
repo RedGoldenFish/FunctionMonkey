@@ -15,7 +15,6 @@
 
   <ItemGroup>
     <PackageReference Include="AzureFromTheTrenches.Commanding.Abstractions" Version="9.0.2" />
-    <PackageReference Include="Microsoft.Azure.DocumentDB.Core" Version="2.18.0" />
   </ItemGroup>
 
 </Project>

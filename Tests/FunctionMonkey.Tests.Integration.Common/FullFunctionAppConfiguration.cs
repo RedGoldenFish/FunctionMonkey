@@ -142,7 +142,7 @@ namespace FunctionMonkey.Tests.Integration.Common
                 .CosmosDb(cosmos => cosmos
                     .ChangeFeedFunction<CosmosChangeFeedCommand>(Constants.Cosmos.Collection, Constants.Cosmos.Database)
                     .ChangeFeedFunction<CosmosTriggerTableOutputCommand>(Constants.Cosmos.OutputTableCollection,
-                        Constants.Cosmos.Database, leaseCollectionName: Constants.Cosmos.OutputTableLeases)
+                        Constants.Cosmos.Database, leaseContainerName: Constants.Cosmos.OutputTableLeases)
                     .OutputTo.StorageTable(Constants.Storage.Table.Markers)
                 )
 

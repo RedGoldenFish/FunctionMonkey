@@ -26,45 +26,44 @@ namespace FunctionMonkey.Builders
             _leaseConnectionStringName = leaseConnectionName;
         }
 
-        public ICosmosDbFunctionOptionBuilder<TCommand> ChangeFeedFunction<TCommand>(
-            string collectionName,
+        public ICosmosDbFunctionOptionBuilder<TCommand> ChangeFeedFunction<TCommand, TDocument>(
+            string containerName,
             string databaseName,
-            string leaseCollectionName = "leases",
+            string leaseContainerName = "leases",
             string leaseDatabaseName = null,
             bool createLeaseCollectionIfNotExists = false,
             bool startFromBeginning = false,
-            bool convertToPascalCase = true,
-            string leaseCollectionPrefix = null,
+            string leaseContainerPrefix = null,
             int? maxItemsPerInvocation = null,
             int? feedPollDelay = null,
             int? leaseAcquireInterval = null,
             int? leaseExpirationInterval = null,
             int? leaseRenewInterval = null,
-            int? checkpointInterval = null,
-            int? leasesCollectionThroughput = null,
+            int? leasesContainerThroughput = null,
             bool trackRemainingWork = false,
             string remainingWorkCronExpression = "*/5 * * * * *"
             )
+        where TDocument : IDocument
         {
             CosmosDbFunctionDefinition definition = new CosmosDbFunctionDefinition(typeof(TCommand))
             {
                 ConnectionStringName = _connectionStringName,
-                CollectionName = collectionName,
+                ContainerName = containerName,
                 DatabaseName = databaseName,
+                DocumentType = typeof(TDocument),
+                DocumentTypeName = typeof(TDocument).EvaluateType(),
                 LeaseConnectionStringName = _leaseConnectionStringName,
-                LeaseCollectionName = leaseCollectionName,
+                LeaseContainerName = leaseContainerName,
                 LeaseDatabaseName = leaseDatabaseName ?? databaseName,
                 CreateLeaseCollectionIfNotExists = createLeaseCollectionIfNotExists,
-                ConvertToPascalCase = convertToPascalCase,
                 StartFromBeginning = startFromBeginning,
-                LeaseCollectionPrefix = leaseCollectionPrefix,
+                LeaseContainerPrefix = leaseContainerPrefix,
                 MaxItemsPerInvocation = maxItemsPerInvocation,
                 FeedPollDelay = feedPollDelay,
                 LeaseAcquireInterval = leaseAcquireInterval,
                 LeaseExpirationInterval = leaseExpirationInterval,
                 LeaseRenewInterval = leaseRenewInterval,
-                CheckpointInterval = checkpointInterval,
-                LeasesCollectionThroughput = leasesCollectionThroughput,
+                LeasesContainerThroughput = leasesContainerThroughput,
                 TrackRemainingWork = trackRemainingWork,
                 RemainingWorkCronExpression = remainingWorkCronExpression
             };
@@ -72,44 +71,44 @@ namespace FunctionMonkey.Builders
             return new CosmosDbFunctionOptionBuilder<TCommand>(_connectionStringSettingNames, this, definition);
         }
 
-        public ICosmosDbFunctionOptionBuilder<TCommand> ChangeFeedFunction<TCommand, TCosmosDbErrorHandler>(
-            string collectionName,
+        public ICosmosDbFunctionOptionBuilder<TCommand> ChangeFeedFunction<TCommand, TCosmosDbErrorHandler, TDocument>(
+            string containerName,
             string databaseName,
-            string leaseCollectionName = "leases",
+            string leaseContainerName = "leases",
             string leaseDatabaseName = null,
             bool createLeaseCollectionIfNotExists = false,
             bool startFromBeginning = false,
-            bool convertToPascalCase = false,
-            string leaseCollectionPrefix = null,
+            string leaseContainerPrefix = null,
             int? maxItemsPerInvocation = null,
             int? feedPollDelay = null,
             int? leaseAcquireInterval = null,
             int? leaseExpirationInterval = null,
             int? leaseRenewInterval = null,
-            int? checkpointInterval = null,
-            int? leasesCollectionThroughput = null,
+            int? leasesContainerThroughput = null,
             bool trackRemainingWork = false,
             string remainingWorkCronExpression = "*/5 * * * * *"
-            ) where TCosmosDbErrorHandler : ICosmosDbErrorHandler
+            ) where TCosmosDbErrorHandler : ICosmosDbErrorHandler<TDocument>
+        where TDocument : IDocument
         {
             CosmosDbFunctionDefinition definition = new CosmosDbFunctionDefinition(typeof(TCommand))
             {
                 ConnectionStringName = _connectionStringName,
-                CollectionName = collectionName,
+                ContainerName = containerName,
                 DatabaseName = databaseName,
+                DocumentType = typeof(TDocument),
+                DocumentTypeName = typeof(TDocument).EvaluateType(),
                 LeaseConnectionStringName = _leaseConnectionStringName,
-                LeaseCollectionName = leaseCollectionName,
+                LeaseContainerName = leaseContainerName,
                 LeaseDatabaseName = leaseDatabaseName ?? databaseName,
                 CreateLeaseCollectionIfNotExists = createLeaseCollectionIfNotExists,
-                ConvertToPascalCase = convertToPascalCase,
                 StartFromBeginning = startFromBeginning,
-                LeaseCollectionPrefix = leaseCollectionPrefix,
+                LeaseContainerPrefix = leaseContainerPrefix,
                 MaxItemsPerInvocation = maxItemsPerInvocation,
                 FeedPollDelay = feedPollDelay,
                 LeaseAcquireInterval = leaseAcquireInterval,
                 LeaseExpirationInterval = leaseExpirationInterval,
                 LeaseRenewInterval = leaseRenewInterval,
-                LeasesCollectionThroughput = leasesCollectionThroughput,
+                LeasesContainerThroughput = leasesContainerThroughput,
                 ErrorHandlerType = typeof(TCosmosDbErrorHandler),
                 ErrorHandlerTypeName = typeof(TCosmosDbErrorHandler).EvaluateType(),
                 TrackRemainingWork = trackRemainingWork,

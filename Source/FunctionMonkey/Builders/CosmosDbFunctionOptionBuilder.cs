@@ -23,38 +23,39 @@ namespace FunctionMonkey.Builders
             _functionDefinition = functionDefinition;
         }
 
-        public ICosmosDbFunctionOptionBuilder<TCommand> ChangeFeedFunction<TCommand>(string collectionName, string databaseName,
-            string leaseCollectionName = "leases", string leaseDatabaseName = null,
-            bool createLeaseCollectionIfNotExists = false, bool startFromBeginning = false, bool convertToPascalCase = false,
-            string leaseCollectionPrefix = null, int? maxItemsPerInvocation = null, int? feedPollDelay = null,
+        public ICosmosDbFunctionOptionBuilder<TCommand> ChangeFeedFunction<TCommand, TDocument>(string containerName, string databaseName,
+            string leaseContainerName = "leases", string leaseDatabaseName = null,
+            bool createLeaseCollectionIfNotExists = false, bool startFromBeginning = false,
+            string leaseContainerPrefix = null, int? maxItemsPerInvocation = null, int? feedPollDelay = null,
             int? leaseAcquireInterval = null, int? leaseExpirationInterval = null, int? leaseRenewInterval = null,
-            int? checkpointInterval = null, int? leasesCollectionThroughput = null,
+            int? leasesContainerThroughput = null,
             bool trackRemainingWork = true,
             string remainingWorkCronExpression = "*/1 * * * * *")
+        where TDocument : IDocument
         {
-            return _underlyingBuilder.ChangeFeedFunction<TCommand>(collectionName, databaseName,
-                leaseCollectionName, leaseDatabaseName,
-                createLeaseCollectionIfNotExists, startFromBeginning, convertToPascalCase,
-                leaseCollectionPrefix, maxItemsPerInvocation, feedPollDelay,
+            return _underlyingBuilder.ChangeFeedFunction<TCommand, TDocument>(containerName, databaseName,
+                leaseContainerName, leaseDatabaseName,
+                createLeaseCollectionIfNotExists, startFromBeginning,
+                leaseContainerPrefix, maxItemsPerInvocation, feedPollDelay,
                 leaseAcquireInterval, leaseExpirationInterval, leaseRenewInterval,
-                checkpointInterval, leasesCollectionThroughput, trackRemainingWork, remainingWorkCronExpression);
+                leasesContainerThroughput, trackRemainingWork, remainingWorkCronExpression);
         }
 
-        public ICosmosDbFunctionOptionBuilder<TCommand> ChangeFeedFunction<TCommand, TCosmosDbErrorHandler>(string collectionName, string databaseName,
-            string leaseCollectionName = "leases", string leaseDatabaseName = null,
-            bool createLeaseCollectionIfNotExists = false, bool startFromBeginning = false, bool convertToPascalCase = false,
-            string leaseCollectionPrefix = null, int? maxItemsPerInvocation = null, int? feedPollDelay = null,
+        public ICosmosDbFunctionOptionBuilder<TCommand> ChangeFeedFunction<TCommand, TCosmosDbErrorHandler, TDocument>(string containerName, string databaseName,
+            string leaseContainerName = "leases", string leaseDatabaseName = null,
+            bool createLeaseCollectionIfNotExists = false, bool startFromBeginning = false,
+            string leaseContainerPrefix = null, int? maxItemsPerInvocation = null, int? feedPollDelay = null,
             int? leaseAcquireInterval = null, int? leaseExpirationInterval = null, int? leaseRenewInterval = null,
-            int? checkpointInterval = null, int? leasesCollectionThroughput = null,
+            int? leasesContainerThroughput = null,
             bool trackRemainingWork = true,
-            string remainingWorkCronExpression = "*/1 * * * * *") where TCosmosDbErrorHandler : ICosmosDbErrorHandler
+            string remainingWorkCronExpression = "*/1 * * * * *") where TCosmosDbErrorHandler : ICosmosDbErrorHandler<TDocument> where TDocument : IDocument
         {
-            return _underlyingBuilder.ChangeFeedFunction<TCommand, TCosmosDbErrorHandler>(collectionName, databaseName,
-                leaseCollectionName, leaseDatabaseName,
-                createLeaseCollectionIfNotExists, startFromBeginning, convertToPascalCase,
-                leaseCollectionPrefix, maxItemsPerInvocation, feedPollDelay,
+            return _underlyingBuilder.ChangeFeedFunction<TCommand, TCosmosDbErrorHandler, TDocument>(containerName, databaseName,
+                leaseContainerName, leaseDatabaseName,
+                createLeaseCollectionIfNotExists, startFromBeginning,
+                leaseContainerPrefix, maxItemsPerInvocation, feedPollDelay,
                 leaseAcquireInterval, leaseExpirationInterval, leaseRenewInterval,
-                checkpointInterval, leasesCollectionThroughput, trackRemainingWork, remainingWorkCronExpression);
+                leasesContainerThroughput, trackRemainingWork, remainingWorkCronExpression);
         }
 
         public ICosmosDbFunctionOptionBuilder<TCommandOuter> Options(Action<IFunctionOptionsBuilder> options)
@@ -67,7 +68,7 @@ namespace FunctionMonkey.Builders
         public IOutputBindingBuilder<ICosmosDbFunctionOptionBuilder<TCommandOuter>> OutputTo =>
             new OutputBindingBuilder<ICosmosDbFunctionOptionBuilder<TCommandOuter>>(_connectionStringSettingNames, this, _functionDefinition, _pendingOutputConverterType);
 
-        private Type _pendingOutputConverterType = null;
+        private Type _pendingOutputConverterType;
         public ICosmosDbFunctionOptionBuilder<TCommandOuter> OutputBindingConverter<TConverter>() where TConverter : IOutputBindingConverter
         {
             if (_functionDefinition.OutputBinding != null)

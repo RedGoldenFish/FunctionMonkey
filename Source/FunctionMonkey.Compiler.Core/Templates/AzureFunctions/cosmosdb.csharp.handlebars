@@ -7,7 +7,7 @@ using Microsoft.Azure.Documents.ChangeFeedProcessor;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.Documents;
+using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
@@ -26,20 +26,19 @@ namespace {{Namespace}}
         [FunctionName("{{Name}}")]
         public async Task Run(
             [CosmosDBTrigger(databaseName: "{{DatabaseName}}"
-                             ,collectionName: "{{CollectionName}}"
-                             ,ConnectionStringSetting = "{{ConnectionStringName}}"
-                             ,LeaseCollectionName="{{LeaseCollectionName}}"
-                             ,LeaseConnectionStringSetting="{{LeaseConnectionStringName}}"
-                             {{#if LeaseCollectionPrefix}},LeaseCollectionPrefix="{{LeaseCollectionPrefix}}"{{/if}}
+                             ,containerName: "{{ContainerName}}"
+                             ,Connection = "{{ConnectionStringName}}"
+                             ,LeaseContainerName="{{LeaseContainerName}}"
+                             ,LeaseConnection="{{LeaseConnectionStringName}}"
+                             {{#if LeaseContainerPrefix}},LeaseContainerPrefix="{{LeaseContainerPrefix}}"{{/if}}
                              {{#if MaxItemsPerInvocation}},MaxItemsPerInvocation={{MaxItemsPerInvocation}}{{/if}}
                              {{#if FeedPollDelay}},FeedPollDelay={{FeedPollDelay}}{{/if}}
                              {{#if LeaseAcquireInterval}},LeaseAcquireInterval={{LeaseAcquireInterval}}{{/if}}
                              {{#if LeaseExpirationInterval}},LeaseExpirationInterval={{LeaseExpirationInterval}}{{/if}}
                              {{#if LeaseRenewInterval}},LeaseRenewInterval={{LeaseRenewInterval}}{{/if}}
-                             {{#if CheckpointInterval}},CheckpointInterval={{CheckpointInterval}}{{/if}}
-                             {{#if LeasesCollectionThroughput}},LeasesCollectionThroughput={{LeasesCollectionThroughput}}{{/if}}
+                             {{#if LeasesContainerThroughput}},LeasesContainerThroughput={{LeasesContainerThroughput}}{{/if}}
             )]
-            IReadOnlyList<Document> input,
+            IReadOnlyList<{{DocumentTypeName}}> input,
             ILogger log,
             System.Threading.CancellationToken cancellationToken,
             Microsoft.Azure.WebJobs.ExecutionContext executionContext
@@ -58,7 +57,7 @@ namespace {{Namespace}}
                     command = transformer.Transform(command);
                 {{/if}}
                 {{#if CommandHasResult}}
-                    {{{CommandResultTypeName}}} result = await FunctionMonkey.Runtime.Mediator.RequestAsync<{{{CommandResultTypeName}}}>(command, tokenSource.Token);
+                    {{{CommandResultTypeName}}} result = await FunctionMonkey.Runtime.Mediator.RequestAsync<{{{CommandResultTypeName}}}>(command, cancellationToken);
                 {{else}}
                     await FunctionMonkey.Runtime.Mediator.SendAsync(command, cancellationToken);
                 {{/if}}
@@ -68,7 +67,7 @@ namespace {{Namespace}}
                     () => ({{ErrorHandlerTypeName}})FunctionMonkey.Runtime.ServiceProvider.GetService(typeof({{ErrorHandlerTypeName}}))
                 );
                 {{/if}}
-                foreach(Document document in input)
+                foreach({{DocumentTypeName}} document in input)
                 {
                     try
                     {
@@ -77,15 +76,7 @@ namespace {{Namespace}}
                             command = new {{CommandTypeName}}();
                             command.Document = document;
                         {{else}}
-                            {{#if ConvertToPascalCase}}
-                                string json = document.ToString();
-                                command = JsonConvert.DeserializeObject<{{CommandTypeName}}>(json);
-                            {{else}}
-                                command = new {{CommandTypeName}}();
-                                {{#each CommandProperties}}
-                                    command.{{Name}} = document.GetPropertyValue<{{TypeName}}>("{{CosmosPropertyName}}");
-                                {{/each}}
-                            {{/if}}
+                            command = document;
                         {{/if}}
 
                         {{#if HasCommandTransformer}}
@@ -128,8 +119,8 @@ namespace {{Namespace}}
         [FunctionName("Monitor{{Name}}")]
         public static async Task Run(
             [TimerTrigger("{{RemainingWorkCronExpression}}", RunOnStartup = true)] TimerInfo myTimer,
-            [CosmosDB("{{DatabaseName}}", "{{CollectionName}}", ConnectionStringSetting = "{{ConnectionStringName}}")] DocumentClient monitoredCollectionClient,
-            [CosmosDB("{{DatabaseName}}", "{{LeaseCollectionName}}", ConnectionStringSetting = "{{ConnectionStringName}}")] DocumentClient leaseCollectionClient,
+            [CosmosDB("{{DatabaseName}}", "{{ContainerName}}", Connection = "{{ConnectionStringName}}")] CosmosClient monitoredCollectionClient,
+            [CosmosDB("{{DatabaseName}}", "{{LeaseCollectionName}}", Connection = "{{ConnectionStringName}}")] CosmosClient leaseCollectionClient,
             ILogger log)
         {
             var estimator = GetRemainingWorkEstimator(monitoredCollectionClient, leaseCollectionClient);
@@ -142,8 +133,8 @@ namespace {{Namespace}}
         private static Lazy<IRemainingWorkEstimator> _remainingWorkEstimator;
 
         private static IRemainingWorkEstimator GetRemainingWorkEstimator(
-            DocumentClient monitoredCollectionClient,
-            DocumentClient leaseCollectionClient)
+            CosmosClient monitoredCollectionClient,
+            CosmosClient leaseCollectionClient)
         {
             if (_remainingWorkEstimator == null)
             {

@@ -108,17 +108,23 @@ namespace FunctionMonkey.Infrastructure
 
         private void CompleteCosmosDbFunctionDefinition(CosmosDbFunctionDefinition cosmosDbFunctionDefinition)
         {
-            Type documentCommandType = typeof(ICosmosDbDocumentCommand);
-            Type documentBatchCommandType = typeof(ICosmosDbDocumentBatchCommand);
+            Type documentCommandType = typeof(ICosmosDbDocumentCommand<>);
+            Type documentBatchCommandType = typeof(ICosmosDbDocumentBatchCommand<>);
 
             ExtractCosmosCommandProperties(cosmosDbFunctionDefinition);
 
-            cosmosDbFunctionDefinition.IsDocumentCommand = documentCommandType.IsAssignableFrom(cosmosDbFunctionDefinition.CommandType);
-            cosmosDbFunctionDefinition.IsDocumentBatchCommand = documentBatchCommandType.IsAssignableFrom(cosmosDbFunctionDefinition.CommandType);
+            cosmosDbFunctionDefinition.IsDocumentCommand = cosmosDbFunctionDefinition.CommandType.GetInterfaces().Any(i => documentCommandType.IsAssignableFrom(i.GetGenericTypeDefinition()));
+            cosmosDbFunctionDefinition.IsDocumentBatchCommand = cosmosDbFunctionDefinition.CommandType.GetInterfaces().Any(i => documentBatchCommandType.IsAssignableFrom(i.GetGenericTypeDefinition()));
             if (cosmosDbFunctionDefinition.IsDocumentCommand && cosmosDbFunctionDefinition.IsDocumentBatchCommand)
             {
                 throw new ConfigurationException(
                     $"Command {cosmosDbFunctionDefinition.CommandType.Name} implements both ICosmosDbDocumentCommand and ICosmosDbDocumentBatchCommand - it can only implement one of these interfaces");
+            }
+
+            if (!cosmosDbFunctionDefinition.IsDocumentCommand && !cosmosDbFunctionDefinition.IsDocumentBatchCommand)
+            {
+                cosmosDbFunctionDefinition.DocumentType = cosmosDbFunctionDefinition.CommandType;
+                cosmosDbFunctionDefinition.DocumentTypeName = cosmosDbFunctionDefinition.CommandTypeName;
             }
         }
 
