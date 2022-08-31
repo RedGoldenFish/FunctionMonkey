@@ -40,11 +40,11 @@ namespace {{Namespace}}
     )
         {
             log.LogInformation("HTTP trigger function {{Name}} processed a request.");
-            
+
             FunctionMonkey.Runtime.FunctionProvidedLogger.Value = log;
-            
+
             log.LogInformation("HTTP trigger function {{Name}} accessed runtime.");
-            
+
             FunctionMonkey.PluginFunctions pluginFunctions = FunctionMonkey.Runtime.PluginFunctions["{{Name}}"];
 
             string requestUrl = GetRequestUrl(req);
@@ -60,7 +60,7 @@ namespace {{Namespace}}
                 string[] values = headerKeyValuesPair.Value.ToArray();
                 headerDictionary.Add(headerKeyValuesPair.Key, values);
             }
-            contextSetter.SetHttpContext(null, requestUrl, headerDictionary);
+            contextSetter.SetHttpContext(req.HttpContext.User, requestUrl, headerDictionary);
 
             System.Security.Claims.ClaimsPrincipal principal = null;
             // If we validate tokens then we need to read the header, validate it and retrieve a claims principal. Returning unauthorized if
@@ -75,13 +75,13 @@ namespace {{Namespace}}
             {
                 return new UnauthorizedResult();
             }
-            
+
             principal = await pluginFunctions.ValidateToken(authorizationHeader);
             if (principal == null)
             {
                 return new UnauthorizedResult();
             }
-            contextSetter.SetHttpContext(principal, requestUrl, headerDictionary);    
+            contextSetter.SetHttpContext(principal, requestUrl, headerDictionary);
             {{/if}}
 
             {{#if AuthorizesClaims}}
@@ -106,7 +106,7 @@ namespace {{Namespace}}
                 {
                     requestBody = await reader.ReadToEndAsync();
                 }
-                
+
                 if (!System.String.IsNullOrWhiteSpace(requestBody))
                 {
                     try
@@ -171,7 +171,7 @@ namespace {{Namespace}}
                             {{else}}
                                 {{{DiscreteTypeName}}} parsedValue = default({{{DiscreteTypeName}}});
                             {{/if}}
-                
+
                             {{#if IsString}}
                             parsedValue = queryParameterValue;
                             {{else if IsEnum}}
@@ -215,10 +215,10 @@ namespace {{Namespace}}
                                     return CreateBadParameterResponse("Invalid type for query parameter {{{Name}}}");
                                 }
                             {{/if}}
-                
+
                             {{#if IsCollection}}
                                 {{#if IsFSharpList}}
-                                    collection = new {{{CollectionInstanceTypeName}}}(parsedValue, collection); 
+                                    collection = new {{{CollectionInstanceTypeName}}}(parsedValue, collection);
                                 {{else if IsCollectionArray}}
                                     collection[queryParameterArrayIndex] = parsedValue;
                                     queryParameterArrayIndex++;
@@ -230,11 +230,11 @@ namespace {{Namespace}}
                                     imtPropertyValues["{{Name}}"] = parsedValue;
                                 {{else}}
                                     command.{{Name}} = parsedValue;
-                                {{/if}}                             
+                                {{/if}}
                                 break;
                             {{/if}}
                         }
-                
+
                         {{#if IsCollection}}
                             {{#if ../UsesImmutableTypes}}
                                 imtPropertyValues["{{Name}}"] = collection;
@@ -245,7 +245,7 @@ namespace {{Namespace}}
                     }
                 {{/unless}}
             {{/each}}
-            
+
             {{#if HeaderBindingConfiguration}}
                 {{#unless IsFormCollection}}
                     string headerName;
@@ -402,13 +402,13 @@ namespace {{Namespace}}
             {{#if UsesImmutableTypes}}
                 command = MergeCommandWithParameters(imtPropertyValues, command);
             {{/if}}
-    
+
             {{#if ValidatesToken}}
-            {{#unless CommandTypeIsUnit}}    
+            {{#unless CommandTypeIsUnit}}
             command = ({{{CommandTypeName}}})(await pluginFunctions.BindClaims(principal, command));
-            {{/unless}}    
+            {{/unless}}
             {{/if}}
-        
+
             {{#if HasCommandTransformer}}
             FunctionMonkey.Abstractions.ICommandTransformer transformer = (FunctionMonkey.Abstractions.ICommandTransformer)FunctionMonkey.Runtime.ServiceProvider.GetService(typeof({{{CommandTransformerTypeName}}}));
             command = transformer.Transform(command);
@@ -446,9 +446,9 @@ namespace {{Namespace}}
                         {{{CommandResultTypeName}}} result = await FunctionMonkey.Runtime.Mediator.RequestAsync<{{{CommandResultTypeName}}}>(command, tokenSource.Token);
                     {{/if}}
                 {{/if}}
-                
+
                 {{{collectorOutputBinding}}}
-            
+
                 {{#if ReturnResponseBodyWithOutputBinding}}
                     log.LogWarning("0");
                     log.LogWarning("{command}", command);
@@ -463,8 +463,8 @@ namespace {{Namespace}}
                     var handledResponse = responseTask != null ? (await responseTask) : null;
                     return handledResponse ?? new NoContentResult();
                 {{/if}}
-                
-            {{else}}            
+
+            {{else}}
             try
             {
                 {{#if IsFunctionalFunction}}
@@ -481,7 +481,7 @@ namespace {{Namespace}}
                     {{else}}
                         await FunctionMonkey.Runtime.Mediator.SendAsync(command, tokenSource.Token);
                     {{/if}}
-                {{/if}}             
+                {{/if}}
                 {{#if CommandHasResult}}
                     {{#if HasHttpResponseHandler}}
                         {{#if IsValidationResult}}
@@ -502,7 +502,7 @@ namespace {{Namespace}}
                             var responseTask = pluginFunctions.CreateResponseForResult(command, result);
                             var handledResponse = responseTask != null ? (await responseTask) : null;
                             return handledResponse ?? {{#if ResultIsFSharpUnit}}new OkResult(){{else}}CreateResponse(200, result, pluginFunctions){{/if}};
-                        {{/if}}                        
+                        {{/if}}
                     {{else}}
                         {{#if IsValidationResult}}
                             FunctionMonkey.Commanding.Abstractions.Validation.ValidationResult validationResult = (FunctionMonkey.Commanding.Abstractions.Validation.ValidationResult)result;
@@ -517,7 +517,7 @@ namespace {{Namespace}}
                     // We don't need to cover this branch for F# as all handlers have results
                     {{#if HasHttpResponseHandler}}
                         var responseTask = pluginFunctions.CreateResponse(command);
-                        var handledResponse = responseTask != null ? (await responseTask) : null; 
+                        var handledResponse = responseTask != null ? (await responseTask) : null;
                         return handledResponse ?? new OkResult();
                     {{else}}
                         return new OkResult();
@@ -564,7 +564,7 @@ namespace {{Namespace}}
           string str4 = request.QueryString.Value;
           return new System.Text.StringBuilder(request.Scheme.Length + "://".Length + str1.Length + str2.Length + str3.Length + str4.Length).Append(request.Scheme).Append("://").Append(str1).Append(str2).Append(str3).Append(str4).ToString();
         }
-    
+
         public delegate System.Boolean TryDelegate<T>(System.String input, out T result);
 
         private static System.Boolean TryParseNullable<T>(
@@ -578,13 +578,13 @@ namespace {{Namespace}}
 
           return success;
         }
-                        
+
         private static {{{CommandTypeName}}} CreateNewCommand()
         {
             {{#if UsesImmutableTypes}}
                 {{#if CommandTypeIsUnit}}
                     return null;
-                {{else}}    
+                {{else}}
                 return new {{{CommandTypeName}}}(
                     {{#each ImmutableTypeConstructorParameters}}
                         {{#if IsFSharpOptionType}}
@@ -595,7 +595,7 @@ namespace {{Namespace}}
                         {{#unless @last}},{{/unless}}
                     {{/each}}
                 );
-                {{/if}}    
+                {{/if}}
             {{else}}
                 return new {{{CommandTypeName}}}();
             {{/if}}
@@ -615,5 +615,5 @@ namespace {{Namespace}}
             {{/if}}
         }
         {{/if}}
-    }    
+    }
 }
