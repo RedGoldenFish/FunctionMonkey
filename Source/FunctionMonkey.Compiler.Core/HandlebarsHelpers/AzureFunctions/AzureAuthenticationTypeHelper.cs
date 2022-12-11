@@ -34,6 +34,14 @@ namespace FunctionMonkey.Compiler.Core.HandlebarsHelpers.AzureFunctions
                         {
                             writer.Write("AuthorizationLevel.Function");
                         }
+                        else if (httpFunctionDefinition.Authorization == AuthorizationTypeEnum.System)
+                        {
+                            writer.Write("AuthorizationLevel.System");
+                        }
+                        else if (httpFunctionDefinition.Authorization == AuthorizationTypeEnum.Admin)
+                        {
+                            writer.Write("AuthorizationLevel.Admin");
+                        }
                         else
                         {
                             throw new CompilerException(
@@ -70,6 +78,14 @@ namespace FunctionMonkey.Compiler.Core.HandlebarsHelpers.AzureFunctions
                         else if (httpFunctionDefinition.Authorization == AuthorizationTypeEnum.Function)
                         {
                             writer.Write("function");
+                        }
+                        else if (httpFunctionDefinition.Authorization == AuthorizationTypeEnum.System)
+                        {
+                            writer.Write("system");
+                        }
+                        else if (httpFunctionDefinition.Authorization == AuthorizationTypeEnum.Admin)
+                        {
+                            writer.Write("admin");
                         }
                         else
                         {

@@ -15,7 +15,15 @@ namespace FunctionMonkey.Abstractions.Builders
         /// <summary>
         /// Requires a function code
         /// </summary>
-        Function = 1,        
+        Function = 1,
+        /// <summary>
+        /// Requires the master key
+        /// </summary>
+        Admin = 3,
+        /// <summary>
+        /// Requires a system key
+        /// </summary>
+        System = 4,
         /// <summary>
         /// Requires a valid authorization header token - an ITokenValidator must be configured
         /// </summary>
@@ -37,7 +45,7 @@ namespace FunctionMonkey.Abstractions.Builders
         /// </param>
         /// <typeparam name="TTokenValidator">The token validators concrete class</typeparam>
         /// <returns>The builder for use in a Fluent API</returns>
-        IAuthorizationBuilder TokenValidator<TTokenValidator>(string header=null) where TTokenValidator : ITokenValidator;
+        IAuthorizationBuilder TokenValidator<TTokenValidator>(string header = null) where TTokenValidator : ITokenValidator;
 
         /// <summary>
         /// Allows a custom claims binder to be registered. This can only occur globally and must take responsibility

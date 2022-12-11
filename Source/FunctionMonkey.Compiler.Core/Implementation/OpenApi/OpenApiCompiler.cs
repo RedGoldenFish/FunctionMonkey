@@ -334,7 +334,7 @@ namespace FunctionMonkey.Compiler.Core.Implementation.OpenApi
                             }
                         }
 
-                        if (functionByRoute.Authorization == AuthorizationTypeEnum.Function)
+                        if (functionByRoute.Authorization is AuthorizationTypeEnum.Function or AuthorizationTypeEnum.Admin or AuthorizationTypeEnum.System)
                         {
                             var isGetOrDelete = method == HttpMethod.Get || method == HttpMethod.Delete;
                             operation.Parameters.Add(new OpenApiParameter

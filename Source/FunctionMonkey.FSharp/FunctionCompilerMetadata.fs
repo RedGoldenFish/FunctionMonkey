@@ -21,22 +21,22 @@ open Models
 
 module internal FunctionCompilerMetadata =
     exception OnlyRecordTypesSupportedForCommandsException
-    
+
     let private (|Match|_|) pattern input =
         let m = Regex.Match(input, pattern) in
         if m.Success then Some (List.tail [ for g in m.Groups -> g.Value ]) else None
-        
+
     let private createBridgedFunction func =
         match func with
         | null -> null
         | _ -> new BridgedFunction(func)
-    
+
     let create configuration =
-       
+
         let patchOutputBindingConnectionString (abstractOutputBinding:AbstractOutputBinding) =
             let ensureIsSet defaultValue (existingSetting:string) =
-                match String.IsNullOrWhiteSpace(existingSetting) with | true -> defaultValue | _ -> existingSetting 
-            
+                match String.IsNullOrWhiteSpace(existingSetting) with | true -> defaultValue | _ -> existingSetting
+
             match abstractOutputBinding with
             | :? CosmosOutputBinding as c -> c.ConnectionStringSettingName <- c.ConnectionStringSettingName |> ensureIsSet configuration.defaultConnectionSettingNames.cosmosDb
             | :? ServiceBusQueueOutputBinding as s -> s.ConnectionStringSettingName <- s.ConnectionStringSettingName |> ensureIsSet configuration.defaultConnectionSettingNames.serviceBus
@@ -45,9 +45,9 @@ module internal FunctionCompilerMetadata =
             | :? StorageTableOutputBinding as st -> st.ConnectionStringSettingName <- st.ConnectionStringSettingName |> ensureIsSet configuration.defaultConnectionSettingNames.storage
             | :? SignalROutputBinding as sr -> sr.ConnectionStringSettingName <- sr.ConnectionStringSettingName |> ensureIsSet configuration.defaultConnectionSettingNames.storage
             | _ -> ()
-            
+
             abstractOutputBinding
-        
+
         let extractConstructorParametersForType (aType:Type) =
             let createParameter (cp:ParameterInfo) =
                 ImmutableTypeConstructorParameter(
@@ -62,21 +62,21 @@ module internal FunctionCompilerMetadata =
             | 0 -> []
             | 1 -> aType.GetConstructors().[0].GetParameters() |> Seq.map createParameter |> Seq.toList
             | _ -> raise OnlyRecordTypesSupportedForCommandsException
-        
+
         let extractConstructorParameters attributes =
             extractConstructorParametersForType attributes.commandType
-            
+
         let getNamespace coreAttributes =
             (sprintf "%s.Functions" (coreAttributes.commandType.Assembly.GetName().Name.Replace("-", "_")))
-            
+
         let nullableInt (value:int option) = match value with | Some v -> System.Nullable<int>(v) | None -> System.Nullable<int>()
-        
+
         let nullableString (value:string option) = match value with | Some s -> s | None -> null
-        
+
         let isFSharpList (pt:Type) =
             let result = pt.IsGenericType && pt.GetGenericTypeDefinition() = typedefof<_ list>
             result
-            
+
         let createCosmosDbFunctionDefinition (configuration:FunctionAppConfiguration) (cosmosFunction:CosmosDbFunction) =
             CosmosDbFunctionDefinition(
                 cosmosFunction.coreAttributes.commandType,
@@ -104,8 +104,8 @@ module internal FunctionCompilerMetadata =
                 CheckpointInterval = (cosmosFunction.checkpointInterval |> nullableInt),
                 LeasesCollectionThroughput = (cosmosFunction.leasesCollectionThroughput |> nullableInt)
             )
-        
-            
+
+
         let createStorageQueueFunctionDefinition (configuration:FunctionAppConfiguration) (storageFunction:StorageQueueFunction) =
             StorageQueueFunctionDefinition(
                 storageFunction.coreAttributes.commandType,
@@ -120,7 +120,7 @@ module internal FunctionCompilerMetadata =
                 IsUsingValidator = not (storageFunction.coreAttributes.validator = null),
                 UsesImmutableTypes = true,
                 FunctionHandler = storageFunction.coreAttributes.handler,
-                ValidatorFunction = storageFunction.coreAttributes.validator,                
+                ValidatorFunction = storageFunction.coreAttributes.validator,
                 IsValidFunction = configuration.isValidHandler,
                 Namespace = (storageFunction.coreAttributes |> getNamespace) + "2",
                 SerializeFunction = (match storageFunction.coreAttributes.serializer with | null -> configuration.defaultSerializer | _ -> storageFunction.coreAttributes.serializer),
@@ -129,7 +129,7 @@ module internal FunctionCompilerMetadata =
                                   | Some s -> ((s :?> AbstractOutputBinding) |> patchOutputBindingConnectionString)
                                   | None -> null)
             )
-            
+
         let createStorageBlobFunctionDefinition (configuration:FunctionAppConfiguration) (storageFunction:StorageBlobFunction) =
             BlobFunctionDefinition(
                 storageFunction.coreAttributes.commandType,
@@ -144,7 +144,7 @@ module internal FunctionCompilerMetadata =
                 IsUsingValidator = not (storageFunction.coreAttributes.validator = null),
                 UsesImmutableTypes = true,
                 FunctionHandler = storageFunction.coreAttributes.handler,
-                ValidatorFunction = storageFunction.coreAttributes.validator,                
+                ValidatorFunction = storageFunction.coreAttributes.validator,
                 IsValidFunction = configuration.isValidHandler,
                 Namespace = (storageFunction.coreAttributes |> getNamespace) + "2",
                 SerializeFunction = (match storageFunction.coreAttributes.serializer with | null -> configuration.defaultSerializer | _ -> storageFunction.coreAttributes.serializer),
@@ -153,7 +153,7 @@ module internal FunctionCompilerMetadata =
                                   | Some s -> ((s :?> AbstractOutputBinding) |> patchOutputBindingConnectionString)
                                   | None -> null)
             )
-        
+
         let createTimerFunctionDefinition (configuration:FunctionAppConfiguration) (timerFunction:TimerFunction) =
             TimerFunctionDefinition(
                 timerFunction.coreAttributes.commandType,
@@ -165,7 +165,7 @@ module internal FunctionCompilerMetadata =
                 IsUsingValidator = not (timerFunction.coreAttributes.validator = null),
                 UsesImmutableTypes = true,
                 FunctionHandler = timerFunction.coreAttributes.handler,
-                ValidatorFunction = timerFunction.coreAttributes.validator,                
+                ValidatorFunction = timerFunction.coreAttributes.validator,
                 IsValidFunction = configuration.isValidHandler,
                 Namespace = (timerFunction.coreAttributes |> getNamespace) + "2",
                 SerializeFunction = (match timerFunction.coreAttributes.serializer with | null -> configuration.defaultSerializer | _ -> timerFunction.coreAttributes.serializer),
@@ -174,7 +174,7 @@ module internal FunctionCompilerMetadata =
                                   | Some s -> ((s :?> AbstractOutputBinding) |> patchOutputBindingConnectionString)
                                   | None -> null)
             )
-        
+
         let createServiceBusQueueFunctionDefinition (configuration:FunctionAppConfiguration) (sbqFunction:ServiceBusQueueFunction) =
             ServiceBusQueueFunctionDefinition(
                 sbqFunction.coreAttributes.commandType,
@@ -190,7 +190,7 @@ module internal FunctionCompilerMetadata =
                 IsUsingValidator = not (sbqFunction.coreAttributes.validator = null),
                 UsesImmutableTypes = true,
                 FunctionHandler = sbqFunction.coreAttributes.handler,
-                ValidatorFunction = sbqFunction.coreAttributes.validator,                
+                ValidatorFunction = sbqFunction.coreAttributes.validator,
                 IsValidFunction = configuration.isValidHandler,
                 Namespace = (sbqFunction.coreAttributes |> getNamespace) + "2",
                 SerializeFunction = (match sbqFunction.coreAttributes.serializer with | null -> configuration.defaultSerializer | _ -> sbqFunction.coreAttributes.serializer),
@@ -199,7 +199,7 @@ module internal FunctionCompilerMetadata =
                                   | Some s -> ((s :?> AbstractOutputBinding) |> patchOutputBindingConnectionString)
                                   | None -> null)
             )
-            
+
         let createServiceBusSubscriptionFunctionDefinition  (configuration:FunctionAppConfiguration) (sbsFunction:ServiceBusSubscriptionFunction) =
             ServiceBusSubscriptionFunctionDefinition(
                 sbsFunction.coreAttributes.commandType,
@@ -216,7 +216,7 @@ module internal FunctionCompilerMetadata =
                 IsUsingValidator = not (sbsFunction.coreAttributes.validator = null),
                 UsesImmutableTypes = true,
                 FunctionHandler = sbsFunction.coreAttributes.handler,
-                ValidatorFunction = sbsFunction.coreAttributes.validator,                
+                ValidatorFunction = sbsFunction.coreAttributes.validator,
                 IsValidFunction = configuration.isValidHandler,
                 Namespace = (sbsFunction.coreAttributes |> getNamespace),
                 SerializeFunction = (match sbsFunction.coreAttributes.serializer with | null -> configuration.defaultSerializer | _ -> sbsFunction.coreAttributes.serializer),
@@ -225,7 +225,7 @@ module internal FunctionCompilerMetadata =
                                   | Some s -> ((s :?> AbstractOutputBinding) |> patchOutputBindingConnectionString)
                                   | None -> null)
             )
-        
+
         let createHttpFunctionDefinition (configuration:FunctionAppConfiguration) (httpFunction:HttpFunction) =
             let convertVerb verb =
                 match verb with
@@ -234,23 +234,25 @@ module internal FunctionCompilerMetadata =
                 | Post -> HttpMethod.Post
                 | Patch -> HttpMethod.Patch
                 | Delete -> HttpMethod.Delete
-                
+
             let convertAuthorizationMode mode =
                 match mode with
                 | Anonymous -> AuthorizationTypeEnum.Anonymous
                 | Token -> AuthorizationTypeEnum.TokenValidation
                 | Function -> AuthorizationTypeEnum.Function
-                
+                | System -> AuthorizationTypeEnum.System
+                | Admin -> AuthorizationTypeEnum.Admin
+
             let extractQueryParameters (routeParameters:HttpParameter list) (headerMappings:HeaderBindingConfiguration) =
                 let isSupportedFSharpQueryParameterType (pt:Type) =
                     // TODO: In here we need to look for the F# collection types
                     (pt |> InternalHelpers.isFSharpOptionType) || (pt |> isFSharpList)
-                
+
                 let propertyIsPossibleQueryParameter (x:PropertyInfo) =
                     x.GetCustomAttribute<SecurityPropertyAttribute>() = null
                     && (x.PropertyType.IsSupportedCSharpQueryParameterType() || x.PropertyType |> isSupportedFSharpQueryParameterType)
                     && not(routeParameters |> Seq.exists (fun y -> y.Name = x.Name))
-                
+
                 let properties =
                     httpFunction
                         .coreAttributes
@@ -271,21 +273,21 @@ module internal FunctionCompilerMetadata =
                                    )
                         |> Seq.toList
                 queryParameters
-                    
-                
+
+
             let extractRouteParameters () =
                 let createRouteParameter (parameterName:string) =
                     let isOptional = parameterName.EndsWith("?")
                     let parts = parameterName.Split(':')
                     let routeParameterName = parts.[0].TrimEnd('?')
-                    
+
                     let matchedProperty = httpFunction.coreAttributes.commandType.GetProperties() |> Seq.find (fun p -> p.Name.ToLower() = routeParameterName.ToLower())
                     let isPropertyNullable = matchedProperty.PropertyType.IsValueType && not (Nullable.GetUnderlyingType(matchedProperty.PropertyType) = null)
-                    
+
                     let routeTypeName = match isOptional && isPropertyNullable with
                                         | true -> sprintf "{%s}?" (matchedProperty.PropertyType.EvaluateType())
                                         | false -> matchedProperty.PropertyType.EvaluateType()
-                    
+
                     HttpParameter(
                                      Name = matchedProperty.Name,
                                      Type = matchedProperty.PropertyType,
@@ -298,22 +300,22 @@ module internal FunctionCompilerMetadata =
                                      RouteName = routeParameterName,
                                      RouteTypeName = routeTypeName
                                  )
-                
+
                 Regex.Matches(httpFunction.route, "{(.*?)}")
                     |> Seq.map (fun m -> m.Groups.[1].Value |> createRouteParameter)
                     |> Seq.toList
-                
+
             let resolvedAuthorizationMode = match httpFunction.authorizationMode with
                                             | Some a -> a
-                                            | None -> configuration.authorization.defaultAuthorizationMode                
+                                            | None -> configuration.authorization.defaultAuthorizationMode
             let routeParameters = extractRouteParameters ()
             let headerBindingConfiguration =
                 match httpFunction.headerMappings.Length > 0 with
                 | true -> HeaderBindingConfiguration(
                            PropertyFromHeaderMappings =
                                Dictionary<string,string>(
-                                   httpFunction.headerMappings |> Seq.map(fun h -> KeyValuePair(h.propertyName, h.headerName))                             
-                               )     
+                                   httpFunction.headerMappings |> Seq.map(fun h -> KeyValuePair(h.propertyName, h.headerName))
+                               )
                            )
                 | false -> HeaderBindingConfiguration(PropertyFromHeaderMappings=Dictionary<string,string>())
             HttpFunctionDefinition(
@@ -336,7 +338,7 @@ module internal FunctionCompilerMetadata =
                  QueryParameters = (extractQueryParameters routeParameters headerBindingConfiguration),
                  RouteParameters = routeParameters,
                  ImmutableTypeConstructorParameters = extractConstructorParameters httpFunction.coreAttributes,
-                 Namespace = (httpFunction.coreAttributes |> getNamespace),                 
+                 Namespace = (httpFunction.coreAttributes |> getNamespace),
                  CommandDeserializerType = typeof<CamelCaseJsonSerializer>,
                  IsUsingValidator = not (httpFunction.coreAttributes.validator = null),
                  OutputBinding = (match httpFunction.coreAttributes.outputBinding with
@@ -363,12 +365,12 @@ module internal FunctionCompilerMetadata =
                  ReturnResponseBodyWithOutputBinding = httpFunction.returnResponseBodyWithOutputBinding,
                  SerializeFunction = (match httpFunction.coreAttributes.serializer with | null -> configuration.defaultSerializer | _ -> httpFunction.coreAttributes.serializer),
                  DeserializeFunction = (match httpFunction.coreAttributes.deserializer with | null -> configuration.defaultDeserializer | _ -> httpFunction.coreAttributes.deserializer)
-                 
+
             ) :> AbstractFunctionDefinition
-        
-        
+
+
         // form up and return the function compiler metadata
-        
+
         {
             defaultConnectionSettingNames = configuration.defaultConnectionSettingNames
             claimsMappings = configuration.authorization.claimsMappings |> Seq.map (
@@ -388,7 +390,7 @@ module internal FunctionCompilerMetadata =
                                                                     )
                                     | None -> null)
             functionDefinitions =
-                [] 
+                []
                 |> Seq.append (configuration.functions.httpFunctions
                                |> Seq.map (fun f -> createHttpFunctionDefinition configuration f)
                                |> Seq.cast<AbstractFunctionDefinition>)
@@ -401,7 +403,7 @@ module internal FunctionCompilerMetadata =
                 |> Seq.append (configuration.functions.storageFunctions
                                |> Seq.map (function
                                    | StorageQueue q ->
-                                       q |> createStorageQueueFunctionDefinition configuration :> AbstractFunctionDefinition 
+                                       q |> createStorageQueueFunctionDefinition configuration :> AbstractFunctionDefinition
                                    | Blob s ->
                                        s |> createStorageBlobFunctionDefinition configuration :> AbstractFunctionDefinition))
                 |> Seq.append (configuration.functions.timerFunctions
