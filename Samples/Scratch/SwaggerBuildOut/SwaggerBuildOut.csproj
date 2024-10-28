@@ -25,12 +25,12 @@
     <EmbeddedResource Include="Swagger\index.html" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Autofac" Version="6.4.0" />
-    <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="8.0.0" />
+    <PackageReference Include="Autofac" Version="8.1.1" />
+    <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="10.0.0" />
     <PackageReference Include="AzureFromTheTrenches.Commanding" Version="9.0.1" />
-    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.CosmosDB" Version="3.0.10" />
-    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.ServiceBus" Version="5.5.1" />
-    <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="4.1.1" />
+    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.CosmosDB" Version="4.8.1" />
+    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.ServiceBus" Version="5.16.4" />
+    <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="4.5.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Source\FunctionMonkey.Abstractions\FunctionMonkey.Abstractions.csproj" />
