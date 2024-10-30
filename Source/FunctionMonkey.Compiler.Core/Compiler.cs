@@ -286,6 +286,10 @@ namespace FunctionMonkey.Compiler.Core
                         case CosmosOutputBinding:
                             assemblies.Add(typeof(CosmosDBAttribute).Assembly);
                             break;
+                        case ServiceBusQueueOutputBinding:
+                            assemblies.Add(typeof(ServiceBusAttribute).Assembly);
+                            assemblies.Add(typeof(Azure.Core.Amqp.AmqpMessageBody).Assembly);
+                            break;
                     }
 
                 }
